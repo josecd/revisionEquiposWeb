@@ -23,6 +23,13 @@ export class ReportesService {
   descargarPDF(id:any){
     const url = `http://localhost:3000/reportes/${id}/pdfReporte`
     window.open(url, "_blank");
+  }
 
+  hotelesLista(){
+    return this._httpClient.get('http://localhost:3000'+`/hoteles`);
+  }
+
+  reportesFiltro(data:any){
+    return this._httpClient.post('http://localhost:3000'+`/reportes/filter`,data);
   }
 }

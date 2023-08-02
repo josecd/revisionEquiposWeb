@@ -20,6 +20,7 @@ import { ReportesService } from 'src/app/services/reportes.service';
 import * as XLSX from 'xlsx';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTableDataSource } from '@angular/material/table';
+import { FormControl } from '@angular/forms';
 
 export interface productsData {
   id: number;
@@ -30,203 +31,128 @@ export interface productsData {
   budget: number;
   priority: string;
 }
+import * as _moment from 'moment';
 
-const ELEMENT_DATA: productsData[] = [
-  {
-    id: 1,
-    imagePath: 'assets/images/profile/user-1.jpg',
-    uname: 'Sunil Joshi',
-    position: 'Web Designer',
-    productName: 'Elite Admin',
-    budget: 3.9,
-    priority: 'low',
+const moment = _moment;
+
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'MM/YYYY',
   },
-  {
-    id: 2,
-    imagePath: 'assets/images/profile/user-2.jpg',
-    uname: 'Andrew McDownland',
-    position: 'Project Manager',
-    productName: 'Real Homes Theme',
-    budget: 24.5,
-    priority: 'medium',
+  display: {
+    dateInput: 'MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
   },
-  {
-    id: 3,
-    imagePath: 'assets/images/profile/user-3.jpg',
-    uname: 'Christopher Jamil',
-    position: 'Project Manager',
-    productName: 'MedicalPro Theme',
-    budget: 12.8,
-    priority: 'high',
-  },
-  {
-    id: 4,
-    imagePath: 'assets/images/profile/user-4.jpg',
-    uname: 'Nirav Joshi',
-    position: 'Frontend Engineer',
-    productName: 'Hosting Press HTML',
-    budget: 2.4,
-    priority: 'critical',
-  },
-  {
-    id: 1,
-    imagePath: 'assets/images/profile/user-1.jpg',
-    uname: 'Sunil Joshi',
-    position: 'Web Designer',
-    productName: 'Elite Admin',
-    budget: 3.9,
-    priority: 'low',
-  },
-  {
-    id: 2,
-    imagePath: 'assets/images/profile/user-2.jpg',
-    uname: 'Andrew McDownland',
-    position: 'Project Manager',
-    productName: 'Real Homes Theme',
-    budget: 24.5,
-    priority: 'medium',
-  },
-  {
-    id: 3,
-    imagePath: 'assets/images/profile/user-3.jpg',
-    uname: 'Christopher Jamil',
-    position: 'Project Manager',
-    productName: 'MedicalPro Theme',
-    budget: 12.8,
-    priority: 'high',
-  },
-  {
-    id: 4,
-    imagePath: 'assets/images/profile/user-4.jpg',
-    uname: 'Nirav Joshi',
-    position: 'Frontend Engineer',
-    productName: 'Hosting Press HTML',
-    budget: 2.4,
-    priority: 'critical',
-  },
-  {
-    id: 1,
-    imagePath: 'assets/images/profile/user-1.jpg',
-    uname: 'Sunil Joshi',
-    position: 'Web Designer',
-    productName: 'Elite Admin',
-    budget: 3.9,
-    priority: 'low',
-  },
-  {
-    id: 2,
-    imagePath: 'assets/images/profile/user-2.jpg',
-    uname: 'Andrew McDownland',
-    position: 'Project Manager',
-    productName: 'Real Homes Theme',
-    budget: 24.5,
-    priority: 'medium',
-  },
-  {
-    id: 3,
-    imagePath: 'assets/images/profile/user-3.jpg',
-    uname: 'Christopher Jamil',
-    position: 'Project Manager',
-    productName: 'MedicalPro Theme',
-    budget: 12.8,
-    priority: 'high',
-  },
-  {
-    id: 4,
-    imagePath: 'assets/images/profile/user-4.jpg',
-    uname: 'Nirav Joshi',
-    position: 'Frontend Engineer',
-    productName: 'Hosting Press HTML',
-    budget: 2.4,
-    priority: 'critical',
-  },
-  {
-    id: 1,
-    imagePath: 'assets/images/profile/user-1.jpg',
-    uname: 'Sunil Joshi',
-    position: 'Web Designer',
-    productName: 'Elite Admin',
-    budget: 3.9,
-    priority: 'low',
-  },
-  {
-    id: 2,
-    imagePath: 'assets/images/profile/user-2.jpg',
-    uname: 'Andrew McDownland',
-    position: 'Project Manager',
-    productName: 'Real Homes Theme',
-    budget: 24.5,
-    priority: 'medium',
-  },
-  {
-    id: 3,
-    imagePath: 'assets/images/profile/user-3.jpg',
-    uname: 'Christopher Jamil',
-    position: 'Project Manager',
-    productName: 'MedicalPro Theme',
-    budget: 12.8,
-    priority: 'high',
-  },
-  {
-    id: 4,
-    imagePath: 'assets/images/profile/user-4.jpg',
-    uname: 'Nirav Joshi',
-    position: 'Frontend Engineer',
-    productName: 'Hosting Press HTML',
-    budget: 2.4,
-    priority: 'critical',
-  },
-];
+};
+
+import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-sample-page',
   templateUrl: './sample-page.component.html',
   styleUrls: ["./style.css"],
-
+  providers: [
+    // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
+    // application's root module. We provide it at the component level here, due to limitations of
+    // our example generation script.
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+    },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+  ],
 })
 export class AppSamplePageComponent implements OnInit {
 
 
-  displayedColumns: string[] = ['select','assigned', 'name', 'priority', 'budget', 'accion'];
+  displayedColumns: string[] = ['select', 'assigned', 'name', 'priority', 'budget', 'accion'];
   displayedColumnsReporte: string[] = ['select', 'usuario', 'descripcion', 'hotel', 'fechaRegistro'];
   selection = new SelectionModel<any>(true, []);
 
   dataSource2 = new MatTableDataSource([]);
 
 
+  //Date
+  info: any
+  date = new FormControl(moment());
+  dp: any
+
+
+  mes: any
+  anio: any
+  hotel: any
+  toppings :any= new FormControl('');
+
+  toppingList: string[] = ['Extra cheese', 'Mushroom', 'Onion', 'Pepperoni', 'Sausage', 'Tomato'];
+
+
+  hoteles: any = [];
+  hotelesSeleccionados:any;
 
   constructor(
     private _reporte: ReportesService,
     private router: Router
   ) {
-
-
+    // this.sixMonthsAgo.setMonth(this.today.getMonth());
   }
 
   ngOnInit(): void {
-    this.getReportes()
+    this.mes = moment().month()
+    this.anio = moment().year();
+    this.getReportes();
+    this.getHoteles();
+  }
+
+  setMonthAndYear(normalizedMonthAndYear: any, datepicker: MatDatepicker<any>) {
+    const ctrlValue = this.date.value!;
+    ctrlValue.month(normalizedMonthAndYear.month());
+    ctrlValue.year(normalizedMonthAndYear.year());
+    this.date.setValue(ctrlValue);
+    this.mes = this.date.value?.month()
+    this.anio = this.date.value?.year();
+    datepicker.close();
   }
 
   getReportes() {
-    this._reporte.getReportes().subscribe({
-      next: (value: any) => {
-        console.log(value);
+    const filtros :any = {
+      mes: this.mes + 1 ,
+      anio: this.anio,
+      hotel: ''
+    }
+    this._reporte.reportesFiltro(filtros).subscribe({
+      next:(value:any) =>{
         this.dataSource2 = new MatTableDataSource(value);
+      },
+      error: (err) => {
+
+          },
+    })
+    
+  }
+
+  getHoteles() {
+    this._reporte.hotelesLista().subscribe({
+      next: (value: any) => {
+        this.hoteles = value
       },
       error: (err) => {
 
       },
     })
   }
-
   getRecord(dato: any) {
-    console.log(dato);
     this.router.navigate(['/extras/detalle', dato.idReporte]);
   }
 
   exportexcel(): void {
     console.log(this.selection);
-    
+
     const fileName = 'ExcelSheet.xlsx';
     /* table id is passed over here */
     let element = document.getElementById('table');
@@ -244,26 +170,26 @@ export class AppSamplePageComponent implements OnInit {
 
   }
 
-  exportData(){
-    var selectedRows:any = this.selection['_selected']
+  exportData() {
+    var selectedRows: any = this.selection['_selected']
     console.log(selectedRows);
-    
-      var rows = [['Usuario', 'Descripción','Hotel' ],];
-      for (var i = 0; i < selectedRows.length; ++i) {
-        var aux = []
-        aux.push(selectedRows[i].usuario['nombre'])
-        aux.push(selectedRows[i].descripcion)
-        aux.push(selectedRows[i].hoteles['nombre'])
-        rows.push(aux)
-      }
-      console.log(rows);
-      
-      this.exportToCsv('Lista_Mantenimientos.csv', rows)
+
+    var rows = [['Usuario', 'Descripción', 'Hotel'],];
+    for (var i = 0; i < selectedRows.length; ++i) {
+      var aux = []
+      aux.push(selectedRows[i].usuario['nombre'])
+      aux.push(selectedRows[i].descripcion)
+      aux.push(selectedRows[i].hoteles['nombre'])
+      rows.push(aux)
+    }
+    console.log(rows);
+
+    this.exportToCsv('Lista_Mantenimientos.csv', rows)
 
   }
 
-  exportToCsv(filename:any, rows:any) {
-    var processRow = function (row:any) {
+  exportToCsv(filename: any, rows: any) {
+    var processRow = function (row: any) {
       var finalVal = '';
       for (var j = 0; j < row.length; j++) {
         var innerValue = row[j] === null || row[j] === undefined ? '' : row[j].toString();
@@ -287,17 +213,17 @@ export class AppSamplePageComponent implements OnInit {
 
     var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
 
-      var link = document.createElement("a");
-      if (link.download !== undefined) { // feature detection
-        // Browsers that support HTML5 download attribute
-        var url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+    var link = document.createElement("a");
+    if (link.download !== undefined) { // feature detection
+      // Browsers that support HTML5 download attribute
+      var url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -327,8 +253,25 @@ export class AppSamplePageComponent implements OnInit {
 
   applyFilter(event: Event) {
     console.log(event);
-    
+
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource2.filter = filterValue.trim().toLowerCase();
   }
+
+  buscar() {
+    this.hotelesSeleccionados = '';
+    const datos: any = this.toppings.value
+    this.hotelesSeleccionados = datos? datos.map((e:any)=>{return e.idHotel}):''
+    const filtros :any = {
+      mes: this.mes + 1 ,
+      anio: this.anio,
+      hotel: this.hotelesSeleccionados.toString()||''
+    }
+    this._reporte.reportesFiltro(filtros).subscribe({
+      next:(value:any) =>{
+        this.dataSource2 = new MatTableDataSource(value);
+      },
+    })
+  }
+
 }

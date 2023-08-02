@@ -71,6 +71,8 @@
         <div class="col">MODELO</div>
         <div class="col">N° DE SERIE</div>
         <div class="col">ÁREA</div>
+        <div class="col">Criticidad</div>
+
       </div>
       <div class="row" style="text-align: center;">
         <div class="col">{{item.equipo}}</div>
@@ -78,6 +80,8 @@
         <div class="col">{{item.modelo}}</div>
         <div class="col">{{item.numeroSerie}}</div>
         <div class="col">{{item.area}}</div>
+        <div class="col">{{item.criticidad}}</div>
+
       </div>
     </mat-card>
 
@@ -154,8 +158,7 @@
         <mat-card-content class="b-t-1">
           <mat-list style="max-width: 100%">
             <mat-list-item>
-              <span matListItemTitle class="f-s-16 f-w-600">{{informacionData.recomendaciones || 'No tiene
-                comentarios'}}</span>
+              <span matListItemTitle class="f-s-16 f-w-600">{{informacionData.recomendaciones || 'No tiene comentarios'}}</span>
             </mat-list-item>
           </mat-list>
         </mat-card-content>

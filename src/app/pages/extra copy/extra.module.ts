@@ -12,6 +12,7 @@ import { ExtraRoutes } from './extra.routing';
 import { AppIconsComponent } from './icons/icons.component';
 import { AppSamplePageComponent } from './sample-page/sample-page.component';
 import { AppDetalleReporteComponent } from './detalle-reporte/detalle-reporte.component';
+import { MatNativeDateModule } from '@angular/material/core';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { AppDetalleReporteComponent } from './detalle-reporte/detalle-reporte.co
     FormsModule,
     ReactiveFormsModule,
     TablerIconsModule.pick(TablerIcons),
+    MatNativeDateModule,
   ],
   declarations: [
     AppIconsComponent,

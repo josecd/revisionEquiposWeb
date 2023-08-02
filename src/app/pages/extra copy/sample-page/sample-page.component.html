@@ -5,7 +5,38 @@
 <mat-card class="cardWithShadow">
   <mat-card-content class="p-24">
     <div class="d-flex w-100">
-      <mat-card-title>Lista</mat-card-title>
+      <!-- <mat-card-title>Lista</mat-card-title> -->
+
+      <mat-form-field>
+        <mat-label>Mes y Año</mat-label>
+        <input matInput [matDatepicker]="dp" [formControl]="date">
+        <!-- <mat-hint>MM/YYYY</mat-hint> -->
+        <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp
+                        startView="multi-year"
+                        (monthSelected)="setMonthAndYear($event, dp)"
+                        panelClass="example-month-picker">
+        </mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Hoteles</mat-label>
+        <mat-select [formControl]="toppings" multiple>
+          <mat-select-trigger>
+            {{toppings.value?.[0]?.nombre || ''}}
+            <span *ngIf="(toppings.value?.length || 0) > 1" class="example-additional-selection">
+              (+{{(toppings.value?.length || 0) - 1}} {{toppings.value?.length === 2 ? 'otro' : 'otros'}})
+            </span>
+          </mat-select-trigger>
+          <mat-option *ngFor="let topping of hoteles" [value]="topping">{{topping.nombre}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" matBadgePosition="before" matBadgeColor="accent" (click)="buscar()">
+        Buscar
+      </button>
+
+
       <div class="m-l-auto">
         <button mat-flat-button color="primary" matBadgePosition="before" matBadgeColor="accent" (click)="exportData()">
           Exportar excel
