@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
@@ -9,15 +10,15 @@ export class ReportesService {
   constructor(private _httpClient: HttpClient) { }
 
   getReportes() {
-    return this._httpClient.get('http://localhost:3000' + '/reportes');
+    return this._httpClient.get(environment.API_URL + '/reportes');
   }
 
   getReporteID(id:number){
-    return this._httpClient.get('http://localhost:3000'+`/reportes/${id}`);
+    return this._httpClient.get(environment.API_URL+`/reportes/${id}`);
   }
 
   verPDF(id:any){
-    const url = 'http://localhost:3000' +'/reportes/pdf/view/' + id 
+    const url = environment.API_URL +'/reportes/pdf/view/' + id 
     window.open(url, "_blank");
   }
   descargarPDF(id:any){
@@ -26,10 +27,10 @@ export class ReportesService {
   }
 
   hotelesLista(){
-    return this._httpClient.get('http://localhost:3000'+`/hoteles`);
+    return this._httpClient.get(environment.API_URL+`/hoteles`);
   }
 
   reportesFiltro(data:any){
-    return this._httpClient.post('http://localhost:3000'+`/reportes/filter`,data);
+    return this._httpClient.post(environment.API_URL+`/reportes/filter`,data);
   }
 }
