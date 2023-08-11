@@ -22,7 +22,7 @@ export class ReportesService {
     window.open(url, "_blank");
   }
   descargarPDF(id:any){
-    const url = `http://localhost:3000/reportes/${id}/pdfReporte`
+    const url = environment.API_URL +`/reportes/${id}/pdfReporte`
     window.open(url, "_blank");
   }
 

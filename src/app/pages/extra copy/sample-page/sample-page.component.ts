@@ -87,13 +87,13 @@ export class AppSamplePageComponent implements OnInit {
   mes: any
   anio: any
   hotel: any
-  toppings :any= new FormControl('');
+  toppings: any = new FormControl('');
 
   toppingList: string[] = ['Extra cheese', 'Mushroom', 'Onion', 'Pepperoni', 'Sausage', 'Tomato'];
 
 
   hoteles: any = [];
-  hotelesSeleccionados:any;
+  hotelesSeleccionados: any;
 
   constructor(
     private _reporte: ReportesService,
@@ -120,20 +120,20 @@ export class AppSamplePageComponent implements OnInit {
   }
 
   getReportes() {
-    const filtros :any = {
-      mes: this.mes + 1 ,
+    const filtros: any = {
+      mes: this.mes + 1,
       anio: this.anio,
       hotel: ''
     }
     this._reporte.reportesFiltro(filtros).subscribe({
-      next:(value:any) =>{
+      next: (value: any) => {
         this.dataSource2 = new MatTableDataSource(value);
       },
       error: (err) => {
 
-          },
+      },
     })
-    
+
   }
 
   getHoteles() {
@@ -174,16 +174,51 @@ export class AppSamplePageComponent implements OnInit {
     var selectedRows: any = this.selection['_selected']
     console.log(selectedRows);
 
-    var rows = [['Usuario', 'Descripción', 'Hotel'],];
-    for (var i = 0; i < selectedRows.length; ++i) {
-      var aux = []
-      aux.push(selectedRows[i].usuario['nombre'])
-      aux.push(selectedRows[i].descripcion)
-      aux.push(selectedRows[i].hoteles['nombre'])
-      rows.push(aux)
-    }
-    console.log(rows);
+    var rows = [['EQUIPO', 'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','OBSERVACIÓN', 'RECOMENDACIONES','COMENTARIO RECORRIDO','CRÍTICO BAJO','CRÍTICO ALTO'],];
+    selectedRows.forEach(async (element: any) => {
+          let criBajo=0
+          let criAlto=0
 
+
+          for (var i = 0; i < element['observaciones'].length; ++i) {
+            var aux = []
+            criBajo= element['observaciones'][i]['criticidad'] == 'Bajo'?criBajo+1:criBajo;
+            criAlto= element['observaciones'][i]['criticidad'] == 'Alto'?criAlto+1:criAlto;
+            console.log(criBajo,criAlto);
+            
+            aux.push(element['observaciones'][i]['equipo']) //EQUIPO
+            aux.push(element['observaciones'][i]['equipo']) //MARCA
+            aux.push(element['observaciones'][i]['modelo']) //MODELO
+            aux.push(element['observaciones'][i]['numeroSerie']) //N° SERIE
+            aux.push(element['observaciones'][i]['area']) //ÁREA
+            aux.push(element['observaciones'][i]['criticidad']) //CRITICIDAD
+            aux.push(element['hoteles']['nombre']) //HOTEL
+            aux.push(element['observaciones'][i]['observacion']) //OBSERVACIÓN
+            aux.push(element['observaciones'][i]['comentarios'].map((e: any) => { return e.comentario+'/' }).toString()) //RECOMENDACIONES(COMENTARIOS)
+            aux.push('') //comentario(recomendacion general)
+            rows.push(aux)
+          }
+
+          var aux = []
+          aux.push('') //EQUIPO
+          aux.push('') //MARCA
+          aux.push('') //MODELO
+          aux.push('') //N° SERIE
+          aux.push('') //ÁREA
+          aux.push('') //CRITICIDAD
+          aux.push() //HOTEL
+          aux.push('') //OBSERVACIÓN
+          aux.push('') //RECOMENDACIONES(COMENTARIOS)
+          aux.push('') //RECOMENDACIONES(COMENTARIOS)
+          aux.push(element['recomendaciones']) //comentario(recomendacion general)
+          aux.push(criBajo) //CRÍTICO BAJO
+          aux.push(criAlto) //CRÍTICO ALTO
+
+          rows.push(aux)
+    });
+
+    console.log(rows);
+    
     this.exportToCsv('Lista_Mantenimientos.csv', rows)
 
   }
@@ -261,14 +296,16 @@ export class AppSamplePageComponent implements OnInit {
   buscar() {
     this.hotelesSeleccionados = '';
     const datos: any = this.toppings.value
-    this.hotelesSeleccionados = datos? datos.map((e:any)=>{return e.idHotel}):''
-    const filtros :any = {
-      mes: this.mes + 1 ,
+    this.hotelesSeleccionados = datos ? datos.map((e: any) => { return e.idReporte }) : ''
+    const filtros: any = {
+      mes: this.mes + 1,
       anio: this.anio,
-      hotel: this.hotelesSeleccionados.toString()||''
+      hotel: this.hotelesSeleccionados.toString() || ''
     }
     this._reporte.reportesFiltro(filtros).subscribe({
-      next:(value:any) =>{
+      next: (value: any) => {
+        console.log(value);
+
         this.dataSource2 = new MatTableDataSource(value);
       },
     })
