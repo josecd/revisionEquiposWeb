@@ -33,4 +33,8 @@ export class ReportesService {
   reportesFiltro(data:any){
     return this._httpClient.post(environment.API_URL+`/reportes/filter`,data);
   }
+
+  reportesFiltroexs(data:any){
+    return this._httpClient.post(environment.API_URL+`/reportes/filterExcel`,data);
+  }
 }

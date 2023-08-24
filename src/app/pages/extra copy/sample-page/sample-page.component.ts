@@ -174,7 +174,7 @@ export class AppSamplePageComponent implements OnInit {
     var selectedRows: any = this.selection['_selected']
     console.log(selectedRows);
 
-    var rows = [['EQUIPO', 'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','OBSERVACIÓN', 'RECOMENDACIONES','COMENTARIO RECORRIDO','CRÍTICO BAJO','CRÍTICO ALTO'],];
+    var rows = [['EQUIPO', 'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','OBSERVACIÓN', 'RECOMENDACIONES','COMENTARIO DE GERENCIA','CRÍTICO BAJO','CRÍTICO ALTO'],];
     selectedRows.forEach(async (element: any) => {
           let criBajo=0
           let criAlto=0
@@ -294,14 +294,22 @@ export class AppSamplePageComponent implements OnInit {
   }
 
   buscar() {
+    this.selection.clear();
+
     this.hotelesSeleccionados = '';
+    console.log(this.toppings);
+    
     const datos: any = this.toppings.value
-    this.hotelesSeleccionados = datos ? datos.map((e: any) => { return e.idReporte }) : ''
+    this.hotelesSeleccionados = datos ? datos.map((e: any) => { return e.idHotel }) : ''
+    console.log(this.hotelesSeleccionados);
+    
     const filtros: any = {
       mes: this.mes + 1,
       anio: this.anio,
       hotel: this.hotelesSeleccionados.toString() || ''
     }
+    console.log(filtros);
+    
     this._reporte.reportesFiltro(filtros).subscribe({
       next: (value: any) => {
         console.log(value);
