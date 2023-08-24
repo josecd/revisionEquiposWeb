@@ -216,10 +216,7 @@ export class AppSamplePageComponent implements OnInit {
 
           rows.push(aux)
     });
-
-    console.log(rows);
-    
-    this.exportToCsv('Lista_Mantenimientos.csv', rows)
+    this.exportToCsv('reporte.csv', rows)
 
   }
 
