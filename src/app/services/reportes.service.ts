@@ -14,7 +14,7 @@ export class ReportesService {
   }
 
   getReporteID(id:number){
-    return this._httpClient.get(environment.API_URL+`/reportes/${id}`);
+    return this._httpClient.get(environment.API_URL+`/reportes/${id}/alto`);
   }
 
   verPDF(id:any){
@@ -31,7 +31,7 @@ export class ReportesService {
   }
 
   reportesFiltro(data:any){
-    return this._httpClient.post(environment.API_URL+`/reportes/filter`,data);
+    return this._httpClient.post(environment.API_URL+`/reportes/filter2`,data);
   }
 
   reportesFiltroexs(data:any){
