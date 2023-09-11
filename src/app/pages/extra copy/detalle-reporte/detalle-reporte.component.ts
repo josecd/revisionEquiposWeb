@@ -81,7 +81,7 @@ export interface Section {
 })
 export class AppDetalleReporteComponent implements OnInit {
 
-  @ViewChild('pdfTable',{static:false})el!:ElementRef;
+  @ViewChild('pdfTable', { static: false }) el!: ElementRef;
   displayedColumns: string[] = ['assigned', 'name', 'priority', 'budget'];
   dataSource = ELEMENT_DATA;
   id: number;
@@ -114,7 +114,7 @@ export class AppDetalleReporteComponent implements OnInit {
     },
   ];
 
-  informacionData:any;
+  informacionData: any;
   constructor(
     private _reporte: ReportesService,
     private route: ActivatedRoute,
@@ -123,10 +123,10 @@ export class AppDetalleReporteComponent implements OnInit {
 
     this.sub = this.route.params.subscribe(params => {
       this.id = +params['id']; // (+) converts string 'id' to a number
-      console.log('Este es el id' ,this.id );
-      
+      console.log('Este es el id', this.id);
+
       // In a real app: dispatch action to load the details here.
-   });
+    });
   }
 
   ngOnInit(): void {
@@ -134,8 +134,8 @@ export class AppDetalleReporteComponent implements OnInit {
   }
 
   getReportes() {
-    this._reporte.getReporteID(this.id ).subscribe({
-      next: (value:any) => {
+    this._reporte.getReporteID(this.id).subscribe({
+      next: (value: any) => {
         this.informacionData = value[0]
         console.log(this.informacionData);
 
@@ -155,9 +155,9 @@ export class AppDetalleReporteComponent implements OnInit {
     this.router.navigate(['/extras/sample-mypage']);
   }
 
-  pdf(){
+  pdf() {
 
-    let pdf  = new jsPDF
+    let pdf = new jsPDF
 
     // pdf.html(this.el.nativeElement,{
     //   callback:(pdf)=>{
@@ -175,7 +175,7 @@ export class AppDetalleReporteComponent implements OnInit {
 
       const contentDataURL = canvas.toDataURL("image/png");
       console.log(contentDataURL);
-      
+
       // let pdf = new jspdf("p", "mm", "a4"); // A4 size page of PDF
       var position = 0;
       pdf.addImage(contentDataURL, "PNG", 0, position, imgWidth, imgHeight);
@@ -184,11 +184,20 @@ export class AppDetalleReporteComponent implements OnInit {
 
   }
 
-  descargarPDF(){
+  descargarPDF() {
     this._reporte.descargarPDF(this.id)
   }
 
-  verPDF(){
-    this._reporte.verPDF(this.id)
+  verPDF() {
+    let templatTipo = ''
+
+    if (this.informacionData.tipoReporte == 'Recorrido') {
+      templatTipo = 'Recorrido'
+    } else if (this.informacionData.tipoReporte == 'Baja') {
+      templatTipo = 'Baja'
+    } else if (this.informacionData.tipoReporte == 'Mantenimiento Preventivo' || this.informacionData.tipoReporte == 'Mantenimiento Correctivo') {
+      templatTipo = 'Mantenimiento'
+    }
+    this._reporte.verPDF(this.id, templatTipo)
   }
 }

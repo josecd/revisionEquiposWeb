@@ -17,8 +17,20 @@ export class ReportesService {
     return this._httpClient.get(environment.API_URL+`/reportes/${id}/alto`);
   }
 
-  verPDF(id:any){
-    const url = environment.API_URL +'/reportes/pdf/view/' + id 
+  verPDF(id:any,tipo:any){
+    let templatTipo
+    let url
+    if (tipo== 'Recorrido') {
+       url = environment.API_URL +'/reportes/pdf/view/' + id 
+
+    } else if (tipo == 'Baja') {
+       url = environment.API_URL +'/reportes/pdf/view/' + id + `/Baja`
+
+    } else if (tipo== 'Mantenimiento') {
+       url = environment.API_URL +'/reportes/pdf/view/' + id + `/Mantenimiento`
+
+    }
+
     window.open(url, "_blank");
   }
   descargarPDF(id:any){
