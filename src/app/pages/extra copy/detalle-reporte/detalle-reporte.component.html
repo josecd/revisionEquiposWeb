@@ -66,6 +66,7 @@
   <section *ngFor="let item of informacionData['observaciones']">
     <mat-card class="cardWithShadow theme-card">
       <div class="row" style="text-align: center;">
+        <div class="col">ITEM</div>
         <div class="col">EQUIPO</div>
         <div class="col">MARCA</div>
         <div class="col">MODELO</div>
@@ -75,6 +76,7 @@
 
       </div>
       <div class="row" style="text-align: center;">
+        <div class="col">{{item.identificador}}</div>
         <div class="col">{{item.equipo}}</div>
         <div class="col">{{item.marca}}</div>
         <div class="col">{{item.modelo}}</div>
