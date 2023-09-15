@@ -36,6 +36,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/extra copy/extra.module').then((m) => m.ExtraModules),
       },
+      {
+        path: 'inventario',
+        loadChildren: () =>
+          import('./pages/inventarios/inventarios.module').then((m) => m.InventariosModule),
+      },
     ],
   },
   {

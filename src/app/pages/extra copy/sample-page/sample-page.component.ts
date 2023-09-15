@@ -151,15 +151,12 @@ export class AppSamplePageComponent implements OnInit {
   }
 
   exportexcel(): void {
-    console.log(this.selection);
 
     const fileName = 'ExcelSheet.xlsx';
     /* table id is passed over here */
     let element = document.getElementById('table');
-    console.log(element);
 
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
-    console.log(ws);
 
     /* generate workbook and add the worksheet */
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -172,7 +169,6 @@ export class AppSamplePageComponent implements OnInit {
 
   exportData() {
     var selectedRows: any = this.selection['_selected']
-    console.log(selectedRows);
 
     var rows = [['EQUIPO', 'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','OBSERVACIÓN', 'RECOMENDACIONES','COMENTARIO DE GERENCIA','CRÍTICO BAJO','CRÍTICO ALTO'],];
     selectedRows.forEach(async (element: any) => {
@@ -184,10 +180,9 @@ export class AppSamplePageComponent implements OnInit {
             var aux = []
             criBajo= element['observaciones'][i]['criticidad'] == 'Bajo'?criBajo+1:criBajo;
             criAlto= element['observaciones'][i]['criticidad'] == 'Alto'?criAlto+1:criAlto;
-            console.log(criBajo,criAlto);
             
             aux.push(element['observaciones'][i]['equipo']) //EQUIPO
-            aux.push(element['observaciones'][i]['equipo']) //MARCA
+            aux.push(element['observaciones'][i]['marca']) //MARCA
             aux.push(element['observaciones'][i]['modelo']) //MODELO
             aux.push(element['observaciones'][i]['numeroSerie']) //N° SERIE
             aux.push(element['observaciones'][i]['area']) //ÁREA
@@ -284,8 +279,6 @@ export class AppSamplePageComponent implements OnInit {
   }
 
   applyFilter(event: Event) {
-    console.log(event);
-
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource2.filter = filterValue.trim().toLowerCase();
   }
@@ -294,22 +287,18 @@ export class AppSamplePageComponent implements OnInit {
     this.selection.clear();
 
     this.hotelesSeleccionados = '';
-    console.log(this.toppings);
     
     const datos: any = this.toppings.value
     this.hotelesSeleccionados = datos ? datos.map((e: any) => { return e.idHotel }) : ''
-    console.log(this.hotelesSeleccionados);
     
     const filtros: any = {
       mes: this.mes + 1,
       anio: this.anio,
       hotel: this.hotelesSeleccionados.toString() || ''
     }
-    console.log(filtros);
     
     this._reporte.reportesFiltro(filtros).subscribe({
       next: (value: any) => {
-        console.log(value);
 
         this.dataSource2 = new MatTableDataSource(value);
       },

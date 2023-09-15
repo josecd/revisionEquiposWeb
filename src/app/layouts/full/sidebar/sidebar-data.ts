@@ -77,6 +77,11 @@ export const navItems: NavItem[] = [
     iconName: 'aperture',
     route: '/extras/sample-mypage',
   },
+  {
+    displayName: 'Inventarios',
+    iconName: 'aperture',
+    route: '/inventario/lista',
+  },
   // {
   //   displayName: 'Sample Page',
   //   iconName: 'aperture',

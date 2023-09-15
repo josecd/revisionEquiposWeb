@@ -18,56 +18,9 @@ import {
   ApexResponsive,
 } from 'ng-apexcharts';
 import { ReportesService } from 'src/app/services/reportes.service';
-
+ 
 import html2canvas from "html2canvas";
-export interface productsData {
-  id: number;
-  imagePath: string;
-  uname: string;
-  position: string;
-  productName: string;
-  budget: number;
-  priority: string;
-}
 
-const ELEMENT_DATA: productsData[] = [
-  {
-    id: 1,
-    imagePath: 'assets/images/profile/user-1.jpg',
-    uname: 'Sunil Joshi',
-    position: 'Web Designer',
-    productName: 'Elite Admin',
-    budget: 3.9,
-    priority: 'low',
-  },
-  {
-    id: 2,
-    imagePath: 'assets/images/profile/user-2.jpg',
-    uname: 'Andrew McDownland',
-    position: 'Project Manager',
-    productName: 'Real Homes Theme',
-    budget: 24.5,
-    priority: 'medium',
-  },
-  {
-    id: 3,
-    imagePath: 'assets/images/profile/user-3.jpg',
-    uname: 'Christopher Jamil',
-    position: 'Project Manager',
-    productName: 'MedicalPro Theme',
-    budget: 12.8,
-    priority: 'high',
-  },
-  {
-    id: 4,
-    imagePath: 'assets/images/profile/user-4.jpg',
-    uname: 'Nirav Joshi',
-    position: 'Frontend Engineer',
-    productName: 'Hosting Press HTML',
-    budget: 2.4,
-    priority: 'critical',
-  },
-];
 
 export interface Section {
   name: string;
@@ -83,7 +36,6 @@ export class AppDetalleReporteComponent implements OnInit {
 
   @ViewChild('pdfTable', { static: false }) el!: ElementRef;
   displayedColumns: string[] = ['assigned', 'name', 'priority', 'budget'];
-  dataSource = ELEMENT_DATA;
   id: number;
   private sub: any;
 
@@ -123,7 +75,6 @@ export class AppDetalleReporteComponent implements OnInit {
 
     this.sub = this.route.params.subscribe(params => {
       this.id = +params['id']; // (+) converts string 'id' to a number
-      console.log('Este es el id', this.id);
 
       // In a real app: dispatch action to load the details here.
     });
@@ -137,7 +88,6 @@ export class AppDetalleReporteComponent implements OnInit {
     this._reporte.getReporteID(this.id).subscribe({
       next: (value: any) => {
         this.informacionData = value[0]
-        console.log(this.informacionData);
 
       },
       error: (err) => {
@@ -157,7 +107,7 @@ export class AppDetalleReporteComponent implements OnInit {
 
   pdf() {
 
-    let pdf = new jsPDF
+    let pdf = new jsPDF("p", "mm", "a4")
 
     // pdf.html(this.el.nativeElement,{
     //   callback:(pdf)=>{
@@ -174,7 +124,6 @@ export class AppDetalleReporteComponent implements OnInit {
       var heightLeft = imgHeight;
 
       const contentDataURL = canvas.toDataURL("image/png");
-      console.log(contentDataURL);
 
       // let pdf = new jspdf("p", "mm", "a4"); // A4 size page of PDF
       var position = 0;
@@ -191,7 +140,7 @@ export class AppDetalleReporteComponent implements OnInit {
   verPDF() {
     let templatTipo = ''
 
-    if (this.informacionData.tipoReporte == 'Recorrido') {
+    if (this.informacionData.tipoReporte == 'Recorrido' || !this.informacionData.tipoReporte) {
       templatTipo = 'Recorrido'
     } else if (this.informacionData.tipoReporte == 'Baja') {
       templatTipo = 'Baja'
