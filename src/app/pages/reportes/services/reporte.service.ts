@@ -5,7 +5,8 @@ import { environment } from 'src/environments/environment.development';
 @Injectable({
   providedIn: 'root'
 })
-export class ReportesService {
+export class ReporteService {
+
   constructor(private _httpClient: HttpClient) { }
 
   getReportes() {
@@ -13,11 +14,10 @@ export class ReportesService {
   }
 
   getReporteID(id:number){
-    return this._httpClient.get(environment.API_URL+`/reportes/${id}/alto`);
+    return this._httpClient.get(environment.API_URL+`/reportes/${id}`);
   }
 
   verPDF(id:any,tipo:any){
-    let templatTipo
     let url
     if (tipo== 'Recorrido') {
        url = environment.API_URL +'/reportes/pdf/view/' + id 
@@ -32,8 +32,8 @@ export class ReportesService {
 
     window.open(url, "_blank");
   }
-  descargarPDF(id:any){
-    const url = environment.API_URL +`/reportes/${id}/pdfReporte`
+  descargarPDF(id:any,type:any){
+    const url = environment.API_URL +`/reportes/${id}/pdfReporte/${type}`
     window.open(url, "_blank");
   }
 
@@ -42,7 +42,7 @@ export class ReportesService {
   }
 
   reportesFiltro(data:any){
-    return this._httpClient.post(environment.API_URL+`/reportes/filter2`,data);
+    return this._httpClient.post(environment.API_URL+`/reportes/filtermobile`,data);
   }
 
   reportesFiltroexs(data:any){
