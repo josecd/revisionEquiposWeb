@@ -42,7 +42,7 @@ import { ReporteService } from '../services/reporte.service';
 })
 export class ListaReportesComponent {
 
-  displayedColumns: string[] = ['select', 'assigned', 'name', 'priority', 'budget', 'accion'];
+  displayedColumns: string[] = ['select','id', 'assigned', 'name', 'priority', 'budget', 'accion'];
   displayedColumnsReporte: string[] = ['select', 'usuario', 'descripcion', 'hotel', 'fechaRegistro'];
   selection = new SelectionModel<any>(true, []);
 
