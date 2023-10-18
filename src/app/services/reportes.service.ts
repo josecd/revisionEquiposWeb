@@ -12,7 +12,7 @@ export class ReportesService {
     return this._httpClient.get(environment.API_URL + '/reportes');
   }
 
-  getReporteID(id:number){
+  getReporteID(id:any){
     return this._httpClient.get(environment.API_URL+`/reportes/${id}/alto`);
   }
 

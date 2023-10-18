@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as XLSX from 'xlsx';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -65,13 +65,8 @@ export class ListaReportesComponent {
 
   hoteles: any = [];
   hotelesSeleccionados: any;
-
-  constructor(
-    private _reporte: ReporteService,
-    private router: Router
-  ) {
-    // this.sixMonthsAgo.setMonth(this.today.getMonth());
-  }
+  private readonly _reporte = inject(ReporteService);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.mes = moment().month()

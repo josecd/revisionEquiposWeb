@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MY_FORMATS } from '../../extra copy/sample-page/sample-page.component';
@@ -46,14 +46,11 @@ export class ListaInventarioComponent {
 
   hoteles: any = [];
   hotelesSeleccionados: any;
+  private readonly _inventario= inject(InventarioService);
+  private readonly _reporte= inject(ReportesService);
+  private readonly router= inject(Router);
+  
 
-  constructor(
-    private _inventario: InventarioService,
-    private _reporte: ReportesService,
-    private router: Router
-  ) {
-
-  }
 
   ngOnInit(): void {
     this.mes = moment().month()

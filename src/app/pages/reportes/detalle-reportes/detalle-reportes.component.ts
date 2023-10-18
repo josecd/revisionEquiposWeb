@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, ViewChild, OnInit, ElementRef } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild, OnInit, ElementRef, inject, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import jsPDF from 'jspdf';
 
@@ -22,8 +22,6 @@ export class DetalleReportesComponent {
 
   @ViewChild('pdfTable', { static: false }) el!: ElementRef;
   displayedColumns: string[] = ['assigned', 'name', 'priority', 'budget'];
-  id: number;
-  private sub: any;
 
   typesOfShoes: string[] = ['Loafers', 'Sneakers'];
 
@@ -53,18 +51,12 @@ export class DetalleReportesComponent {
   ];
 
   informacionData: any;
-  constructor(
-    private _reporte: ReporteService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {
 
-    this.sub = this.route.params.subscribe(params => {
-      this.id = +params['id']; // (+) converts string 'id' to a number
+  private readonly _reporte = inject(ReporteService);
+  private readonly router = inject(Router);
+  @Input() id?: number;
 
-      // In a real app: dispatch action to load the details here.
-    });
-  }
+
 
   ngOnInit(): void {
     this.getReportes()
@@ -83,9 +75,6 @@ export class DetalleReportesComponent {
     })
   }
 
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-  }
 
 
   back(): void {

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ApexChart,
@@ -70,6 +70,9 @@ import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker
 })
 export class AppSamplePageComponent implements OnInit {
 
+  private readonly _reporte = inject(ReportesService);
+  private readonly router = inject(Router);
+
 
   displayedColumns: string[] = ['select','id', 'assigned', 'name', 'priority', 'budget', 'accion'];
   displayedColumnsReporte: string[] = ['select', 'usuario', 'descripcion', 'hotel', 'fechaRegistro'];
@@ -95,12 +98,6 @@ export class AppSamplePageComponent implements OnInit {
   hoteles: any = [];
   hotelesSeleccionados: any;
 
-  constructor(
-    private _reporte: ReportesService,
-    private router: Router
-  ) {
-    // this.sixMonthsAgo.setMonth(this.today.getMonth());
-  }
 
   ngOnInit(): void {
     this.mes = moment().month()

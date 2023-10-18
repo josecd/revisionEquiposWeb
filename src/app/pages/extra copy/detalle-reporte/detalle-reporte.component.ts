@@ -1,24 +1,9 @@
-import { Component, ViewEncapsulation, ViewChild, OnInit, ElementRef } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild, OnInit, ElementRef, Input,inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import jsPDF from 'jspdf';
-import {
-  ApexChart,
-  ChartComponent,
-  ApexDataLabels,
-  ApexLegend,
-  ApexStroke,
-  ApexTooltip,
-  ApexAxisChartSeries,
-  ApexXAxis,
-  ApexYAxis,
-  ApexGrid,
-  ApexPlotOptions,
-  ApexFill,
-  ApexMarkers,
-  ApexResponsive,
-} from 'ng-apexcharts';
+
 import { ReportesService } from 'src/app/services/reportes.service';
- 
+
 import html2canvas from "html2canvas";
 
 
@@ -35,9 +20,13 @@ export interface Section {
 export class AppDetalleReporteComponent implements OnInit {
 
   @ViewChild('pdfTable', { static: false }) el!: ElementRef;
+  @Input() id?: string;
+
+  private readonly _reporte = inject(ReportesService);
+  private readonly router = inject(Router);
+
+
   displayedColumns: string[] = ['assigned', 'name', 'priority', 'budget'];
-  id: number;
-  private sub: any;
 
   typesOfShoes: string[] = ['Loafers', 'Sneakers'];
 
@@ -67,18 +56,7 @@ export class AppDetalleReporteComponent implements OnInit {
   ];
 
   informacionData: any;
-  constructor(
-    private _reporte: ReportesService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {
 
-    this.sub = this.route.params.subscribe(params => {
-      this.id = +params['id']; // (+) converts string 'id' to a number
-
-      // In a real app: dispatch action to load the details here.
-    });
-  }
 
   ngOnInit(): void {
     this.getReportes()
@@ -96,10 +74,7 @@ export class AppDetalleReporteComponent implements OnInit {
     })
   }
 
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-  }
-
+ 
 
   back(): void {
     this.router.navigate(['/extras/sample-mypage']);

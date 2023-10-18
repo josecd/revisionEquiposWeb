@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { InventarioService } from '../services/inventario.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -8,20 +8,13 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./detalle-inventario.component.scss']
 })
 export class DetalleInventarioComponent {
-  id: number;
+  @Input() id: number;
   private sub: any;
   InformacionInventario: any;
+  private readonly _inventario= inject(InventarioService);
+  private readonly router= inject(Router);
 
-  constructor(
-    private _inventario: InventarioService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {
-    this.sub = this.route.params.subscribe(params => {
-      this.id = +params['id'];
-    });
-  }
-
+ 
   ngOnInit(): void {
     this.getInventarioID()
   }

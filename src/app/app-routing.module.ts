@@ -1,6 +1,6 @@
 import { ExtraModules } from './pages/extra copy/extra.module';
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes, provideRouter, withComponentInputBinding } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
 
@@ -64,7 +64,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  imports: [RouterModule.forRoot(routes, { useHash: true ,bindToComponentInputs:true})],
   exports: [RouterModule],
+
 })
 export class AppRoutingModule {}
