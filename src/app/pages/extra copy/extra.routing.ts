@@ -15,7 +15,7 @@ export const ExtraRoutes: Routes = [
         component: AppIconsComponent,
       },
       {
-        path: 'sample-mypage',
+        path: 'lista',
         component: AppSamplePageComponent,
       },
       {

@@ -78,7 +78,7 @@ export class DetalleReportesComponent {
 
 
   back(): void {
-    this.router.navigate(['/extras/sample-mypage']);
+    this.router.navigate(['/reportesAlta/lista']);
   }
 
   pdf() {

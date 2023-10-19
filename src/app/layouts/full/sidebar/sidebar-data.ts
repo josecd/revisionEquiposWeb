@@ -75,7 +75,7 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Reportes Alto',
     iconName: 'aperture',
-    route: '/extras/sample-mypage',
+    route: '/reportesAlta/lista',
   },
   {
     displayName: 'Reportes Lista',

@@ -144,7 +144,7 @@ export class AppSamplePageComponent implements OnInit {
     })
   }
   getRecord(dato: any) {
-    this.router.navigate(['/extras/detalle', dato.idReporte]);
+    this.router.navigate(['/reportesAlta/detalle', dato.idReporte]);
   }
 
   exportexcel(): void {

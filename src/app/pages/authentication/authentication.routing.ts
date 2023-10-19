@@ -11,10 +11,10 @@ export const AuthenticationRoutes: Routes = [
         path: 'login',
         component: AppSideLoginComponent,
       },
-      {
-        path: 'register',
-        component: AppSideRegisterComponent,
-      },
+      // {
+      //   path: 'register',
+      //   component: AppSideRegisterComponent,
+      // },
     ],
   },
 ];

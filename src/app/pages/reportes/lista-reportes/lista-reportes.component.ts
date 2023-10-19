@@ -38,7 +38,8 @@ import { ReporteService } from '../services/reporte.service';
 @Component({
   selector: 'app-lista-reportes',
   templateUrl: './lista-reportes.component.html',
-  styleUrls: ['./lista-reportes.component.scss']
+  styleUrls: ['./lista-reportes.component.scss'],
+  host: {ngSkipHydration: 'true'},
 })
 export class ListaReportesComponent {
 
@@ -68,6 +69,8 @@ export class ListaReportesComponent {
   private readonly _reporte = inject(ReporteService);
   private readonly router = inject(Router);
 
+  // constructor(private readonly _reporte:ReporteService){
+  // }
   ngOnInit(): void {
     this.mes = moment().month()
     this.anio = moment().year();

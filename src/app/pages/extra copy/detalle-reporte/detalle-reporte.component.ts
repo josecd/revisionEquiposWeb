@@ -77,7 +77,7 @@ export class AppDetalleReporteComponent implements OnInit {
  
 
   back(): void {
-    this.router.navigate(['/extras/sample-mypage']);
+    this.router.navigate(['/reportesAlta/lista']);
   }
 
   pdf() {

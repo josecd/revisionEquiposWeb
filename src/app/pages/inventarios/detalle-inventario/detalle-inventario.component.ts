@@ -35,6 +35,6 @@ export class DetalleInventarioComponent {
   }
 
   back(): void {
-    this.router.navigate(['/extras/sample-mypage']);
+    this.router.navigate(['/reportesAlta/lista']);
   }
 }
