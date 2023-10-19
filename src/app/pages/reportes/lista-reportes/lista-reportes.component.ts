@@ -39,9 +39,20 @@ import { ReporteService } from '../services/reporte.service';
   selector: 'app-lista-reportes',
   templateUrl: './lista-reportes.component.html',
   styleUrls: ['./lista-reportes.component.scss'],
+  host: {ngSkipHydration: 'true'},
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+    },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+  ],
 })
 export class ListaReportesComponent {
-
+  private readonly _reporte = inject(ReporteService);
+  private readonly router = inject(Router);
   displayedColumns: string[] = ['select','id', 'assigned', 'name', 'priority', 'budget', 'accion'];
   displayedColumnsReporte: string[] = ['select', 'usuario', 'descripcion', 'hotel', 'fechaRegistro'];
   selection = new SelectionModel<any>(true, []);
@@ -65,8 +76,7 @@ export class ListaReportesComponent {
 
   hoteles: any = [];
   hotelesSeleccionados: any;
-  private readonly _reporte = inject(ReporteService);
-  private readonly router = inject(Router);
+  
 
   // constructor(private readonly _reporte:ReporteService){
   // }

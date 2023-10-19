@@ -49,7 +49,7 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
   bootstrap: [AppComponent],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
-   
+    provideClientHydration()
   ],
 })
 export class AppModule { }

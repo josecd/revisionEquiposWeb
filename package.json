@@ -53,11 +53,11 @@
   "jest": {
     "preset": "jest-preset-angular",
     "setupFilesAfterEnv": [
-    "<rootDir>/config.jest.ts"
+      "<rootDir>/config.jest.ts"
     ],
     "moduleNameMapper": {
-    "@app/(.)": "<rootDir>/src/app/$1",
-    "@src/(.)": "<rootDir>/src/$1"
+      "@app/(.)": "<rootDir>/src/app/$1",
+      "@src/(.)": "<rootDir>/src/$1"
     }
-    }
+  }
 }
