@@ -9,7 +9,7 @@ const routes: Routes = [
   {
     path: '',
     component: FullComponent,
-    // canActivate: [authGuardFn],
+    canActivate: [authGuardFn],
     children: [
       {
         path: '',
