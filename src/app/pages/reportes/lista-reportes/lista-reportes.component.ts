@@ -39,7 +39,6 @@ import { ReporteService } from '../services/reporte.service';
   selector: 'app-lista-reportes',
   templateUrl: './lista-reportes.component.html',
   styleUrls: ['./lista-reportes.component.scss'],
-  host: {ngSkipHydration: 'true'},
 })
 export class ListaReportesComponent {
 
