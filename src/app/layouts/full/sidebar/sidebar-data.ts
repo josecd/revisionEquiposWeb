@@ -74,18 +74,23 @@ export const navItems: NavItem[] = [
   // },
   {
     displayName: 'Reportes Alto',
-    iconName: 'aperture',
+    iconName: 'align-center',
     route: '/reportesAlta/lista',
   },
   {
     displayName: 'Reportes Lista',
-    iconName: 'aperture',
+    iconName: 'file-pencil',
     route: '/reportes/lista',
   },
   {
     displayName: 'Inventarios',
-    iconName: 'aperture',
+    iconName: 'pencil',
     route: '/inventario/lista',
+  },
+  {
+    displayName: 'Gráfica',
+    iconName: 'align-box-bottom-center',
+    route: '/reportes/grafica',
   },
   // {
   //   displayName: 'Sample Page',
