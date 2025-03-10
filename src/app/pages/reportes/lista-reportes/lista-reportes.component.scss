@@ -1,0 +1,6 @@
+.truncate-text {
+    white-space: nowrap;       /* Evita que el texto se divida en varias líneas */
+    overflow: hidden;          /* Oculta el texto que excede el ancho de la celda */
+    text-overflow: ellipsis;   /* Agrega puntos suspensivos al final del texto truncado */
+    max-width: 200px;          /* Establece un ancho máximo para la celda */
+  }
