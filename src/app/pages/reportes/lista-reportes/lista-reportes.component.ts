@@ -148,7 +148,7 @@ export class ListaReportesComponent {
   exportData() {
     var selectedRows: any = this.selection['_selected']
 
-    var rows = [['EQUIPO', 'MARCA', 'MODELO', 'N° SERIE', 'ÁREA', 'CRITICIDAD', 'HOTEL', 'OBSERVACIÓN', 'RECOMENDACIONES', 'COMENTARIO DE GERENCIA', 'CRÍTICO BAJO', 'CRÍTICO ALTO'],];
+    var rows = [['EQUIPO', 'MARCA', 'MODELO', 'N° SERIE', 'ÁREA', 'CRITICIDAD', 'HOTEL','USUARIO', 'OBSERVACIÓN', 'RECOMENDACIONES', 'COMENTARIO DE GERENCIA', 'CRÍTICO BAJO', 'CRÍTICO ALTO'],];
     selectedRows.forEach(async (element: any) => {
       let criBajo = 0
       let criAlto = 0
@@ -166,6 +166,7 @@ export class ListaReportesComponent {
         aux.push(element['observaciones'][i]['area']) //ÁREA
         aux.push(element['observaciones'][i]['criticidad']) //CRITICIDAD
         aux.push(element['hoteles']['nombre']) //HOTEL
+        aux.push(elemnet['usuario']['nombre'])
         aux.push(element['observaciones'][i]['observacion']) //OBSERVACIÓN
         aux.push(element['observaciones'][i]['comentarios'].map((e: any) => { return e.comentario + '/' }).toString()) //RECOMENDACIONES(COMENTARIOS)
         aux.push('') //comentario(recomendacion general)
@@ -180,6 +181,7 @@ export class ListaReportesComponent {
       aux.push('') //ÁREA
       aux.push('') //CRITICIDAD
       aux.push() //HOTEL
+      aux.push() //Usuario
       aux.push('') //OBSERVACIÓN
       aux.push('') //RECOMENDACIONES(COMENTARIOS)
       aux.push('') //RECOMENDACIONES(COMENTARIOS)
