@@ -167,17 +167,17 @@ export class AppSamplePageComponent implements OnInit {
   exportData() {
     var selectedRows: any = this.selection['_selected']
 
-    var rows = [['EQUIPO', 'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','USUARIO','OBSERVACIÓN', 'RECOMENDACIONES','COMENTARIO DE GERENCIA','CRÍTICO BAJO','CRÍTICO ALTO'],];
+    var rows = [['ID','EQUIPO', 'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','USUARIO','OBSERVACIÓN', 'RECOMENDACIONES','COMENTARIO DE GERENCIA','CRÍTICO BAJO','CRÍTICO ALTO','FIRMAS'],];
     selectedRows.forEach(async (element: any) => {
           let criBajo=0
           let criAlto=0
-
+          let firmas=element['firmas'].length
 
           for (var i = 0; i < element['observaciones'].length; ++i) {
             var aux = []
             criBajo= element['observaciones'][i]['criticidad'] == 'Bajo'?criBajo+1:criBajo;
             criAlto= element['observaciones'][i]['criticidad'] == 'Alto'?criAlto+1:criAlto;
-            
+            aux.push(element['idReporte']) //ID REPORTE
             aux.push(element['observaciones'][i]['equipo']) //EQUIPO
             aux.push(element['observaciones'][i]['marca']) //MARCA
             aux.push(element['observaciones'][i]['modelo']) //MODELO
@@ -185,7 +185,7 @@ export class AppSamplePageComponent implements OnInit {
             aux.push(element['observaciones'][i]['area']) //ÁREA
             aux.push(element['observaciones'][i]['criticidad']) //CRITICIDAD
             aux.push(element['hoteles']['nombre']) //HOTEL
-            aux.push(elemnet['usuario']['nombre']) //Usuario
+            aux.push(element['usuario']['nombre']) //Usuario
             aux.push(element['observaciones'][i]['observacion']) //OBSERVACIÓN
             aux.push(element['observaciones'][i]['comentarios'].map((e: any) => { return e.comentario+'/' }).toString()) //RECOMENDACIONES(COMENTARIOS)
             aux.push('') //comentario(recomendacion general)
@@ -193,6 +193,7 @@ export class AppSamplePageComponent implements OnInit {
           }
 
           var aux = []
+          aux.push('') //ID
           aux.push('') //EQUIPO
           aux.push('') //MARCA
           aux.push('') //MODELO
@@ -207,6 +208,8 @@ export class AppSamplePageComponent implements OnInit {
           aux.push(element['recomendaciones']) //comentario(recomendacion general)
           aux.push(criBajo) //CRÍTICO BAJO
           aux.push(criAlto) //CRÍTICO ALTO
+          aux.push(firmas) //FIRMAS
+
 
           rows.push(aux)
     });

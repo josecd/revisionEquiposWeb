@@ -148,10 +148,11 @@ export class ListaReportesComponent {
   exportData() {
     var selectedRows: any = this.selection['_selected']
 
-    var rows = [['EQUIPO', 'MARCA', 'MODELO', 'N° SERIE', 'ÁREA', 'CRITICIDAD', 'HOTEL','USUARIO', 'OBSERVACIÓN', 'RECOMENDACIONES', 'COMENTARIO DE GERENCIA', 'CRÍTICO BAJO', 'CRÍTICO ALTO'],];
+    var rows = [['ID','EQUIPO','REPORTE' ,'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','USUARIO','OBSERVACIÓN', 'RECOMENDACIONES','COMENTARIO DE GERENCIA','CRÍTICO BAJO','CRÍTICO ALTO','FIRMAS'],];
     selectedRows.forEach(async (element: any) => {
       let criBajo = 0
       let criAlto = 0
+      let firmas=element['firmas'].length
 
 
       for (var i = 0; i < element['observaciones'].length; ++i) {
@@ -159,35 +160,39 @@ export class ListaReportesComponent {
         criBajo = element['observaciones'][i]['criticidad'] == 'Bajo' ? criBajo + 1 : criBajo;
         criAlto = element['observaciones'][i]['criticidad'] == 'Alto' ? criAlto + 1 : criAlto;
 
+        aux.push(element['idReporte']) //ID REPORTE
         aux.push(element['observaciones'][i]['equipo']) //EQUIPO
+        aux.push(element['observaciones'][i]['tipoReporte']) //EQUIPO
         aux.push(element['observaciones'][i]['marca']) //MARCA
         aux.push(element['observaciones'][i]['modelo']) //MODELO
         aux.push(element['observaciones'][i]['numeroSerie']) //N° SERIE
         aux.push(element['observaciones'][i]['area']) //ÁREA
         aux.push(element['observaciones'][i]['criticidad']) //CRITICIDAD
         aux.push(element['hoteles']['nombre']) //HOTEL
-        aux.push(elemnet['usuario']['nombre'])
+        aux.push(element['usuario']['nombre']) //Usuario
         aux.push(element['observaciones'][i]['observacion']) //OBSERVACIÓN
-        aux.push(element['observaciones'][i]['comentarios'].map((e: any) => { return e.comentario + '/' }).toString()) //RECOMENDACIONES(COMENTARIOS)
+        aux.push(element['observaciones'][i]['comentarios'].map((e: any) => { return e.comentario+'/' }).toString()) //RECOMENDACIONES(COMENTARIOS)
         aux.push('') //comentario(recomendacion general)
         rows.push(aux)
       }
 
       var aux = []
+      aux.push('') //ID
       aux.push('') //EQUIPO
       aux.push('') //MARCA
       aux.push('') //MODELO
       aux.push('') //N° SERIE
       aux.push('') //ÁREA
       aux.push('') //CRITICIDAD
-      aux.push() //HOTEL
-      aux.push() //Usuario
+      aux.push('') //HOTEL
+      aux.push('') //USUARIO
       aux.push('') //OBSERVACIÓN
       aux.push('') //RECOMENDACIONES(COMENTARIOS)
       aux.push('') //RECOMENDACIONES(COMENTARIOS)
       aux.push(element['recomendaciones']) //comentario(recomendacion general)
       aux.push(criBajo) //CRÍTICO BAJO
       aux.push(criAlto) //CRÍTICO ALTO
+      aux.push(firmas) //FIRMAS
 
       rows.push(aux)
     });
