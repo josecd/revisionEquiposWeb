@@ -204,7 +204,6 @@ export class AppSamplePageComponent implements OnInit {
           aux.push('') //USUARIO
           aux.push('') //OBSERVACIÓN
           aux.push('') //RECOMENDACIONES(COMENTARIOS)
-          aux.push('') //RECOMENDACIONES(COMENTARIOS)
           aux.push(element['recomendaciones']) //comentario(recomendacion general)
           aux.push(criBajo) //CRÍTICO BAJO
           aux.push(criAlto) //CRÍTICO ALTO
