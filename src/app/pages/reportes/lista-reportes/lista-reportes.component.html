@@ -229,8 +229,17 @@
           </ng-container>
 
 
+          <ng-container matColumnDef="firmas">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">
+              Firmas
+            </th>
+            <td mat-cell *matCellDef="let element" class="mat-body-1">
+              {{ element.firmas.length }}
+            </td>
+          </ng-container>
+
           <ng-container matColumnDef="accion">
-            <th mat-header-cell *matHeaderCellDef> Details </th>
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
             <td mat-cell *matCellDef="let element"> <button mat-raised-button color="primary"
                 (click)="getRecord(element)">Ver</button> </td>
           </ng-container>

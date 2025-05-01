@@ -53,8 +53,8 @@ import { ReporteService } from '../services/reporte.service';
 export class ListaReportesComponent {
   private readonly _reporte = inject(ReporteService);
   private readonly router = inject(Router);
-  displayedColumns: string[] = ['select','id', 'assigned', 'name', 'priority', 'budget', 'accion'];
-  displayedColumnsReporte: string[] = ['select', 'usuario', 'descripcion', 'hotel', 'fechaRegistro'];
+  displayedColumns: string[] = ['select','id', 'assigned', 'name', 'priority', 'budget', 'firmas','accion'];
+  displayedColumnsReporte: string[] = ['select', 'usuario', 'descripcion', 'hotel', 'fechaRegistro', 'firmas'];
   selection = new SelectionModel<any>(true, []);
 
   dataSource2 = new MatTableDataSource([]);
