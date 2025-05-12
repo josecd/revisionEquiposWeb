@@ -148,7 +148,7 @@ export class ListaReportesComponent {
   exportData() {
     var selectedRows: any = this.selection['_selected']
 
-    var rows = [['ID','EQUIPO','REPORTE' ,'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','USUARIO','OBSERVACIÓN', 'RECOMENDACIONES','COMENTARIO DE GERENCIA','CRÍTICO BAJO','CRÍTICO ALTO','FIRMAS'],];
+    var rows = [['ID','EQUIPO','REPORTE' ,'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','USUARIO','OBSERVACIÓN', 'RECOMENDACIONES','COMENTARIO DE GERENCIA','NO CRÍTICO','CRÍTICO','FIRMAS'],];
     selectedRows.forEach(async (element: any) => {
       let criBajo = 0
       let criAlto = 0
