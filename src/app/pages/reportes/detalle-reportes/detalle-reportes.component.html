@@ -3,850 +3,317 @@
 
     <mat-card class="cardWithShadow">
         <mat-card-content class="p-24">
-            <div class="d-flex w-100">
-                <mat-card-title>{{informacionData.idReporte}} Reporte- {{informacionData.tipoReporte}}</mat-card-title>
-                <div class="m-l-auto">
-                    <button mat-flat-button color="primary" matBadgePosition="before" matBadgeColor="accent"
-                        (click)="verPDF()">
-                        Ver PDF
+            <div class="d-flex align-items-center w-100" style="gap: 12px; flex-wrap: wrap;">
+                <button mat-icon-button color="primary" (click)="back()" matTooltip="Regresar a la lista">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+                <div>
+                    <div class="mat-subtitle-1 f-w-700" style="font-size: 18px;">
+                        Reporte #{{informacionData.idReporte}}
+                    </div>
+                    <span class="tipo-chip" [ngClass]="getTipoClass(informacionData.tipoReporte)">
+                        {{informacionData.tipoReporte}}
+                    </span>
+                </div>
+                <div class="m-l-auto d-flex" style="gap: 8px;">
+                    <button mat-stroked-button color="primary" (click)="verPDF()">
+                        <mat-icon>picture_as_pdf</mat-icon> Ver PDF
                     </button>
-                    <button mat-flat-button color="primary" matBadgePosition="before" matBadgeColor="accent"
-                        (click)="descargarPDF()">
-                        Descargar PDF
+                    <button mat-flat-button color="primary" (click)="descargarPDF()">
+                        <mat-icon>download</mat-icon> Descargar PDF
                     </button>
-
                 </div>
             </div>
-
         </mat-card-content>
     </mat-card>
 
     <div class="row">
         <div class="col">
             <mat-card class="cardWithShadow">
-                <mat-card-content style="    text-align: center;">
-                    <mat-card-title>Hotel</mat-card-title>
-                    <mat-card-subtitle class="mat-body-1"
-                        *ngIf="informacionData">{{informacionData.hoteles[0].nombre}}</mat-card-subtitle>
+                <mat-card-header style="justify-content: center;">
+                    <mat-card-title style="font-size: 13px; color: #78909c; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Hotel</mat-card-title>
+                </mat-card-header>
+                <mat-card-content style="text-align: center; padding-top: 4px;">
+                    <span class="mat-subtitle-1 f-w-600" *ngIf="informacionData">{{informacionData.hoteles[0].nombre}}</span>
                 </mat-card-content>
             </mat-card>
         </div>
 
         <div class="col" *ngIf="informacionData.turno">
             <mat-card class="cardWithShadow">
-                <mat-card-content style="    text-align: center;">
-                    <mat-card-title>Turno</mat-card-title>
-                    <mat-card-subtitle class="mat-body-1"
-                        >{{informacionData.turno}}</mat-card-subtitle>
+                <mat-card-header style="justify-content: center;">
+                    <mat-card-title style="font-size: 13px; color: #78909c; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Turno</mat-card-title>
+                </mat-card-header>
+                <mat-card-content style="text-align: center; padding-top: 4px;">
+                    <span class="mat-subtitle-1 f-w-600">{{informacionData.turno}}</span>
                 </mat-card-content>
             </mat-card>
         </div>
 
-
         <div class="col">
             <mat-card class="cardWithShadow">
-                <mat-card-content style="    text-align: center;">
-                    <mat-card-title>Fecha</mat-card-title>
-                    <mat-card-subtitle class="mat-body-1">{{informacionData.fechaRegistro | date}}</mat-card-subtitle>
+                <mat-card-header style="justify-content: center;">
+                    <mat-card-title style="font-size: 13px; color: #78909c; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Fecha</mat-card-title>
+                </mat-card-header>
+                <mat-card-content style="text-align: center; padding-top: 4px;">
+                    <span class="mat-subtitle-1 f-w-600">{{informacionData.fechaRegistro | date:'dd/MM/yyyy'}}</span>
                 </mat-card-content>
             </mat-card>
         </div>
     </div>
 
-    <section *ngIf="informacionData.tipoReporte == 'Recorrido' || !informacionData.tipoReporte">
-        <section *ngFor="let item of informacionData['observaciones']">
-            <mat-card class="cardWithShadow theme-card">
-                <div class="row" style="text-align: center;">
-                    <div class="col">ITEM</div>
-                    <div class="col">EQUIPO</div>
-                    <div class="col">MARCA</div>
-                    <div class="col">MODELO</div>
-                    <div class="col">N° DE SERIE</div>
-                    <div class="col">ÁREA</div>
-                    <div class="col">Criticidad</div>
 
-                </div>
-                <div class="row" style="text-align: center;">
-                    <div class="col">{{item.identificador}}</div>
-                    <div class="col">{{item.equipo}}</div>
-                    <div class="col">{{item.marca}}</div>
-                    <div class="col">{{item.modelo}}</div>
-                    <div class="col">{{item.numeroSerie}}</div>
-                    <div class="col">{{item.area}}</div>
-                    <div class="col" *ngIf="item.criticidad == 'Alto'" style="color: red;">{{item.criticidad}}</div>
-                    <div class="col" *ngIf="item.criticidad == 'Bajo'">{{item.criticidad}}</div>
+<section *ngFor="let item of informacionData['observaciones']">
 
+    <!-- Campos del equipo -->
+    <div class="detalle-fields-row">
 
-
-                </div>
-            </mat-card>
-
-            <!-- Observaciones -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Observaciones </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item lines="3">
-                                <span matListItemTitle class="f-s-16 f-w-600"></span>
-                                <span class="mat-body-1">
-                                    {{item.observacion}}
-                                </span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                </mat-card>
+        <div class="col-detalle-field" *ngIf="item?.identificador">
+            <div class="detalle-field-card">
+                <span class="field-label">Ítem</span>
+                <span class="field-value">{{item?.identificador}}</span>
             </div>
+        </div>
 
-
-            <!-- Recomendaciones -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Recomendaciones </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item *ngFor="let item of item['comentarios']">
-                                <span matListItemTitle class="f-s-16 f-w-600">{{item.comentario}}</span>
-                                <span matListItemLine class="mat-body-1">{{item.dateString}}</span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                </mat-card>
+        <div class="col-detalle-field" *ngIf="item?.equipo">
+            <div class="detalle-field-card">
+                <span class="field-label">Equipo</span>
+                <span class="field-value">{{item?.equipo}}</span>
             </div>
+        </div>
 
+        <div class="col-detalle-field" *ngIf="item?.marca">
+            <div class="detalle-field-card">
+                <span class="field-label">Marca</span>
+                <span class="field-value">{{item?.marca}}</span>
+            </div>
+        </div>
 
-            <!-- Evidencia Fotográfica -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Evidencia Fotográfica </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <div class="row">
-                            <div class="col-sm-6 col-lg-3" *ngFor="let itemimg of item['imagenes']">
-                                <mat-card class="cardWithShadow productcard overflow-hidden">
-                                    <a>
-                                        <img src="{{ itemimg.url }}" alt="imgSrc" class="w-100" mat-card-image />
-                                    </a>
+        <div class="col-detalle-field" *ngIf="item?.modelo">
+            <div class="detalle-field-card">
+                <span class="field-label">Modelo</span>
+                <span class="field-value">{{item?.modelo}}</span>
+            </div>
+        </div>
 
-                                    <mat-list style="max-width: 100%">
-                                        <mat-list-item>
-                                            <span matListItemTitle class="f-s-16 f-w-600">{{itemimg.fechaRegistro |
-                                                date}}</span>
-                                        </mat-list-item>
-                                    </mat-list>
-                                </mat-card>
+        <div class="col-detalle-field" *ngIf="item?.numeroSerie">
+            <div class="detalle-field-card">
+                <span class="field-label">N° Serie</span>
+                <span class="field-value">{{item?.numeroSerie}}</span>
+            </div>
+        </div>
+
+        <div class="col-detalle-field" *ngIf="item?.area">
+            <div class="detalle-field-card">
+                <span class="field-label">Área</span>
+                <span class="field-value">{{item?.area}}</span>
+            </div>
+        </div>
+
+        <div class="col-detalle-field" *ngIf="item?.criticidad">
+            <div class="detalle-field-card">
+                <span class="field-label">Criticidad</span>
+                <span class="field-value" [style.color]="item.criticidad === 'Alto' ? '#e53935' : 'inherit'">
+                    {{item?.criticidad}}
+                </span>
+            </div>
+        </div>
+
+        <div class="col-detalle-field" *ngIf="item?.adquisicionEquipo">
+            <div class="detalle-field-card">
+                <span class="field-label">Adquisición Equipo</span>
+                <span class="field-value">{{item?.adquisicionEquipo}}</span>
+            </div>
+        </div>
+
+        <div class="col-detalle-field" *ngIf="item?.ubicacion">
+            <div class="detalle-field-card">
+                <span class="field-label">Ubicación</span>
+                <span class="field-value">{{item?.ubicacion}}</span>
+            </div>
+        </div>
+
+        <div class="col-detalle-field" *ngIf="item?.oc">
+            <div class="detalle-field-card">
+                <span class="field-label">OC</span>
+                <span class="field-value">{{item?.oc}}</span>
+            </div>
+        </div>
+
+        <div class="col-detalle-field" *ngIf="item?.sapID">
+            <div class="detalle-field-card">
+                <span class="field-label">SAP-ID</span>
+                <span class="field-value">{{item?.sapID}}</span>
+            </div>
+        </div>
+
+        <div class="col-detalle-field" *ngIf="item?.tecEsp">
+            <div class="detalle-field-card">
+                <span class="field-label">Técnico Especialista</span>
+                <span class="field-value">{{item?.tecEsp}}</span>
+            </div>
+        </div>
+
+        <div class="col-detalle-field" *ngIf="item?.fechaInicio">
+            <div class="detalle-field-card">
+                <span class="field-label">Fecha Inicio</span>
+                <span class="field-value">{{item?.fechaInicio}}</span>
+            </div>
+        </div>
+
+        <div class="col-detalle-field" *ngIf="item?.fechaFinaliza">
+            <div class="detalle-field-card">
+                <span class="field-label">Fecha Fin</span>
+                <span class="field-value">{{item?.fechaFinaliza}}</span>
+            </div>
+        </div>
+
+        <div class="col-detalle-field" *ngIf="item?.motivoDanio">
+            <div class="detalle-field-card">
+                <span class="field-label">Motivo Daño</span>
+                <span class="field-value">{{item?.motivoDanio}}</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Diagnóstico Técnico -->
+    <div class="col-lg-12" *ngIf="item?.diagnosticoTecnico">
+        <mat-card class="b-1 shadow-none">
+            <mat-card-header>
+                <mat-card-title>Diagnóstico Técnico</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="b-t-1 p-16">
+                <p class="detalle-texto">{{item?.diagnosticoTecnico}}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Fallas detectadas durante el servicio -->
+    <div class="col-lg-12" *ngIf="item?.fallaDetectadaDuraSer">
+        <mat-card class="b-1 shadow-none">
+            <mat-card-header>
+                <mat-card-title>Fallas detectadas durante el servicio</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="b-t-1 p-16">
+                <p class="detalle-texto">{{item?.fallaDetectadaDuraSer}}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Comentario a la entrega del equipo -->
+    <div class="col-lg-12" *ngIf="item?.comentariosEntregaEquip">
+        <mat-card class="b-1 shadow-none">
+            <mat-card-header>
+                <mat-card-title>Comentario a la entrega del equipo</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="b-t-1 p-16">
+                <p class="detalle-texto">{{item?.comentariosEntregaEquip}}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Observaciones -->
+    <div class="col-lg-12">
+        <mat-card class="b-1 shadow-none">
+            <mat-card-header>
+                <mat-card-title>Observaciones</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="b-t-1 p-16">
+                <p class="detalle-texto">{{item.observacion || 'No tiene observaciones'}}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Recomendaciones -->
+    <div class="col-lg-12">
+        <mat-card class="b-1 shadow-none">
+            <mat-card-header>
+                <mat-card-title>Recomendaciones</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="b-t-1">
+                <mat-list *ngIf="item['comentarios']?.length > 0; else sinRecomendaciones">
+                    <mat-list-item *ngFor="let com of item['comentarios']">
+                        <mat-icon matListItemIcon>chevron_right</mat-icon>
+                        <span matListItemTitle class="f-s-15 f-w-600">{{com.comentario}}</span>
+                        <span matListItemLine class="mat-body-1">{{com.dateString}}</span>
+                    </mat-list-item>
+                </mat-list>
+                <ng-template #sinRecomendaciones>
+                    <p class="detalle-texto p-16">No tiene recomendaciones</p>
+                </ng-template>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Evidencia Fotográfica -->
+    <div class="col-lg-12" *ngIf="item['imagenes']?.length > 0">
+        <mat-card class="b-1 shadow-none">
+            <mat-card-header>
+                <mat-card-title>Evidencia Fotográfica</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="b-t-1">
+                <div class="row">
+                    <div class="col-sm-6 col-lg-3" *ngFor="let itemimg of item['imagenes']">
+                        <mat-card class="cardWithShadow productcard overflow-hidden">
+                            <div class="img-wrapper" (click)="ampliarImagen(itemimg.url)">
+                                <img src="{{ itemimg.url }}" alt="imgSrc" class="w-100" mat-card-image />
+                                <div class="img-overlay"><mat-icon>zoom_in</mat-icon></div>
                             </div>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <!-- Comentario -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Comentario </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item>
-                                <span matListItemTitle class="f-s-16 f-w-600">
-                                    {{informacionData.recomendaciones || "No tiene comentarios"}}
-                                </span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <!-- Firmas -->
-            <div class="col-lg-12" *ngIf="false">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Firmas </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <div class="row">
-                            <div class="col-sm-6 col-lg-3" *ngFor="let firma of informacionData['firmas']">
-                                <mat-card class="cardWithShadow productcard overflow-hidden">
-                                    <a>
-                                        <img src="{{ firma.url }}" alt="imgSrc" class="w-100" mat-card-image />
-                                    </a>
-
-                                    <mat-list style="max-width: 100%">
-                                        <mat-list-item style="text-align: center;">
-                                            <span matListItemTitle class="f-s-16 f-w-600">{{firma.tipo}}</span>
-                                            <span matListItemLine class="mat-body-1">{{firma.nombreFirma }}</span>
-                                            <span matListItemLine class="mat-body-1">{{firma.fechaRegistro |
-                                                date}}</span>
-
-                                        </mat-list-item>
-                                    </mat-list>
-                                </mat-card>
-                            </div>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <hr style="border-color:black;">
-
-
-
-            <div class="row" *ngIf="false">
-                <div class="col-sm-6 col-lg-3" *ngFor="let productcard of item['imagenes']">
-                    <mat-card class="cardWithShadow productcard overflow-hidden">
-                        <a>
-                            <img src="{{ productcard.url }}" alt="imgSrc" class="w-100" mat-card-image />
-                        </a>
-                        <mat-card-content class="p-b-24 p-t-12 position-relative">
-                            <button mat-mini-fab color="primary" class="icon-30 cart-btn" matTooltip="Eliminar">
-                                <!-- <i-tabler name="trash" class="icon-16"></i-tabler> -->
-                            </button>
-                            <mat-card-title class="mat-headline-2 f-s-16 m-b-4">{{
-                                productcard.title
-                                }}</mat-card-title>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <h6 class="mat-body-2 f-w-600">{{ productcard.fechaRegistro | date }}</h6>
-                                    <span class="f-s-14 m-l-4 text-decoration-line-through"></span>
-                                </div>
-
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-            </div>
-
-
-        </section>
-    </section>
-
-    <section *ngIf="informacionData.tipoReporte == 'Baja'">
-        <section *ngFor="let item of informacionData['observaciones']">
-
-            <div class="row">
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="false">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Ítem</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.identificador}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.adquisicionEquipo">
-                    <div class="col" *ngIf="item?.adquisicionEquipo">
-                        <mat-card class="cardWithShadow">
-                            <mat-card-content style="text-align: center;">
-                                <mat-card-title>Adquisicion Equipo</mat-card-title>
-                                <mat-card-subtitle class="mat-body-1"
-                                    *ngIf="informacionData">{{item?.adquisicionEquipo}}</mat-card-subtitle>
-                            </mat-card-content>
+                            <mat-card-actions class="img-actions">
+                                <button mat-icon-button matTooltip="Ampliar" (click)="ampliarImagen(itemimg.url)"><mat-icon>zoom_in</mat-icon></button>
+                                <button mat-icon-button matTooltip="Descargar" (click)="descargarImagen(itemimg.url)"><mat-icon>download</mat-icon></button>
+                            </mat-card-actions>
+                            <mat-list style="max-width: 100%">
+                                <mat-list-item>
+                                    <span matListItemTitle class="f-s-14">{{itemimg.fechaRegistro | date:'dd/MM/yyyy'}}</span>
+                                </mat-list-item>
+                            </mat-list>
                         </mat-card>
                     </div>
                 </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
 
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.ubicacion">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Ubicación</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.ubicacion}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
+</section>
 
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.ubicacion">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Equipo</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.equipo}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.oc">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>OC</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.oc}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.sapID">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>SAP-ID</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.sapID}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.marca">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Marca</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.marca}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.modelo">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Modelo</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.modelo}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.numeroSerie">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Número Serie</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.numeroSerie}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-            </div>
+<!-- Comentario general del reporte -->
+<div class="col-lg-12" *ngIf="informacionData.recomendaciones">
+    <mat-card class="b-1 shadow-none">
+        <mat-card-header>
+            <mat-card-title>Comentario General</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="b-t-1 p-16">
+            <p class="detalle-texto">{{informacionData.recomendaciones}}</p>
+        </mat-card-content>
+    </mat-card>
+</div>
 
 
-            <!-- diagnosticoTecnico -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Diagnóstico Técnico </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item lines="3">
-                                <span matListItemTitle class="f-s-16 f-w-600"></span>
-                                <span class="mat-body-1">
-                                    {{item?.diagnosticoTecnico}}
-                                </span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <!-- diagnosticoTecnico -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Motivo Daño </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item lines="3">
-                                <span matListItemTitle class="f-s-16 f-w-600"></span>
-                                <span class="mat-body-1">
-                                    {{item?.motivoDanio}}
-                                </span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-
-            <!-- Observaciones -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Observaciones </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item lines="3">
-                                <span matListItemTitle class="f-s-16 f-w-600"></span>
-                                <span class="mat-body-1">
-                                    {{item.observacion || 'No tiene observacion'}}
-                                </span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-
-            <!-- Recomendaciones -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Recomendaciones </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1" *ngIf="item['comentarios'].length > 0 ">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item *ngFor="let item of item['comentarios']">
-                                <span matListItemTitle class="f-s-16 f-w-600">{{item.comentario}}</span>
-                                <span matListItemLine class="mat-body-1">{{item.dateString}}</span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                    <mat-list style="max-width: 100%" *ngIf="item['comentarios'].length <= 0 ">
-                        <mat-list-item lines="3">
-                            <span matListItemTitle class="f-s-16 f-w-600"></span>
-                            <span class="mat-body-1">
-                                No tiene recomendaciones
-                            </span>
-                        </mat-list-item>
-                    </mat-list>
-                </mat-card>
-            </div>
-
-
-            <!-- Evidencia Fotográfica -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Evidencia Fotográfica </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <div class="row">
-                            <div class="col-sm-6 col-lg-3" *ngFor="let itemimg of item['imagenes']">
-                                <mat-card class="cardWithShadow productcard overflow-hidden">
-                                    <a>
-                                        <img src="{{ itemimg.url }}" alt="imgSrc" class="w-100" mat-card-image />
-                                    </a>
-
-                                    <mat-list style="max-width: 100%">
-                                        <mat-list-item>
-                                            <span matListItemTitle class="f-s-16 f-w-600">{{itemimg.fechaRegistro |
-                                                date}}</span>
-                                        </mat-list-item>
-                                    </mat-list>
-                                </mat-card>
-                            </div>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <!-- Comentario -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Comentario </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item>
-                                <span matListItemTitle class="f-s-16 f-w-600">
-                                    {{informacionData.recomendaciones || "No tiene comentarios"}}
-                                </span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <!-- Firmas -->
-            <div class="col-lg-12" *ngIf="false">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Firmas </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <div class="row">
-                            <div class="col-sm-6 col-lg-3" *ngFor="let firma of informacionData['firmas']">
-                                <mat-card class="cardWithShadow productcard overflow-hidden">
-                                    <a>
-                                        <img src="{{ firma.url }}" alt="imgSrc" class="w-100" mat-card-image />
-                                    </a>
-
-                                    <mat-list style="max-width: 100%">
-                                        <mat-list-item style="text-align: center;">
-                                            <span matListItemTitle class="f-s-16 f-w-600">{{firma.tipo}}</span>
-                                            <span matListItemLine class="mat-body-1">{{firma.nombreFirma }}</span>
-                                            <span matListItemLine class="mat-body-1">{{firma.fechaRegistro |
-                                                date}}</span>
-
-                                        </mat-list-item>
-                                    </mat-list>
-                                </mat-card>
-                            </div>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <hr style="border-color:black;">
-
-
-
-            <div class="row" *ngIf="false">
-                <div class="col-sm-6 col-lg-3" *ngFor="let productcard of item['imagenes']">
-                    <mat-card class="cardWithShadow productcard overflow-hidden">
-                        <a>
-                            <img src="{{ productcard.url }}" alt="imgSrc" class="w-100" mat-card-image />
-                        </a>
-                        <mat-card-content class="p-b-24 p-t-12 position-relative">
-                            <button mat-mini-fab color="primary" class="icon-30 cart-btn" matTooltip="Eliminar">
-                                <!-- <i-tabler name="trash" class="icon-16"></i-tabler> -->
-                            </button>
-                            <mat-card-title class="mat-headline-2 f-s-16 m-b-4">{{
-                                productcard.title
-                                }}</mat-card-title>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <h6 class="mat-body-2 f-w-600">{{ productcard.fechaRegistro | date }}</h6>
-                                    <span class="f-s-14 m-l-4 text-decoration-line-through"></span>
-                                </div>
-
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-            </div>
-
-
-        </section>
-    </section>
-
-    <section
-        *ngIf="informacionData.tipoReporte == 'Mantenimiento Preventivo' || informacionData.tipoReporte == 'Mantenimiento Correctivo'">
-        <section *ngFor="let item of informacionData['observaciones']">
-
-            <div class="row">
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="false">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Ítem</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.identificador}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.adquisicionEquipo">
-                    <div class="col" *ngIf="item?.adquisicionEquipo">
-                        <mat-card class="cardWithShadow">
-                            <mat-card-content style="text-align: center;">
-                                <mat-card-title>Adquisicion Equipo</mat-card-title>
-                                <mat-card-subtitle class="mat-body-1"
-                                    *ngIf="informacionData">{{item?.adquisicionEquipo}}</mat-card-subtitle>
-                            </mat-card-content>
-                        </mat-card>
-                    </div>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.ubicacion">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Ubicación</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.ubicacion}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.ubicacion">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Equipo</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.equipo}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.oc">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>OC</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.oc}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.sapID">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>SAP-ID</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.sapID}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.marca">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Marca</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.marca}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.modelo">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Modelo</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.modelo}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.numeroSerie">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Número Serie</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.numeroSerie}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <!-- //mantte preven y corre -->
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.tecEsp">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Técnico especialista</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.tecEsp}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.fechaInicio">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Inicia</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.fechaInicio}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-
-                <div class="col-xl-6 col-md-3 col-sm-4" *ngIf="item?.fechaFinaliza">
-                    <mat-card class="cardWithShadow">
-                        <mat-card-content style="    text-align: center;">
-                            <mat-card-title>Finaliza</mat-card-title>
-                            <mat-card-subtitle class="mat-body-1"
-                                *ngIf="informacionData">{{item?.fechaFinaliza}}</mat-card-subtitle>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-            </div>
-
-
-            <!-- diagnosticoTecnico -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Diagnóstico Técnico </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                       
-                                <span matListItemTitle class="f-s-16 f-w-600"></span>
-                                <span class="mat-body-1">
-                                    {{item?.diagnosticoTecnico}}
-                                </span>
-                           
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <!-- diagnosticoTecnico -->
-            <div class="col-lg-12" *ngIf="item?.fallaDetectadaDuraSer">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Fallas detectadas durante el servicio </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                                <span matListItemTitle class="f-s-16 f-w-600"></span>
-                                <span class="mat-body-1">
-                                    {{item?.fallaDetectadaDuraSer}}
-                                </span>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <!-- diagnosticoTecnico -->
-            <div class="col-lg-12" *ngIf="item?.comentariosEntregaEquip">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Comentario a la entrega del equipo </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <span matListItemTitle class="f-s-16 f-w-600"></span>
-                       
-                                <span class="mat-body-1">
-                                    {{item?.comentariosEntregaEquip}}
-                                </span>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-
-
-            <!-- Observaciones -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Observaciones </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item lines="3">
-                                <span matListItemTitle class="f-s-16 f-w-600"></span>
-                                <span class="mat-body-1">
-                                    {{item.observacion || 'No tiene observacion'}}
-                                </span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-
-            <!-- Recomendaciones -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Recomendaciones </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1" *ngIf="item['comentarios'].length > 0 ">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item *ngFor="let item of item['comentarios']">
-                                <span matListItemTitle class="f-s-16 f-w-600">{{item.comentario}}</span>
-                                <span matListItemLine class="mat-body-1">{{item.dateString}}</span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                    <mat-list style="max-width: 100%" *ngIf="item['comentarios'].length <= 0 ">
-                        <mat-list-item lines="3">
-                            <span matListItemTitle class="f-s-16 f-w-600"></span>
-                            <span class="mat-body-1">
-                                No tiene recomendaciones
-                            </span>
-                        </mat-list-item>
-                    </mat-list>
-                </mat-card>
-            </div>
-
-
-            <!-- Evidencia Fotográfica -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Evidencia Fotográfica </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <div class="row">
-                            <div class="col-sm-6 col-lg-3" *ngFor="let itemimg of item['imagenes']">
-                                <mat-card class="cardWithShadow productcard overflow-hidden">
-                                    <a>
-                                        <img src="{{ itemimg.url }}" alt="imgSrc" class="w-100" mat-card-image />
-                                    </a>
-
-                                    <mat-list style="max-width: 100%">
-                                        <mat-list-item>
-                                            <span matListItemTitle class="f-s-16 f-w-600">{{itemimg.fechaRegistro |
-                                                date}}</span>
-                                        </mat-list-item>
-                                    </mat-list>
-                                </mat-card>
-                            </div>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <!-- Comentario -->
-            <div class="col-lg-12">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Comentario </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <mat-list style="max-width: 100%">
-                            <mat-list-item>
-                                <span matListItemTitle class="f-s-16 f-w-600">
-                                    {{informacionData.recomendaciones || "No tiene comentarios"}}
-                                </span>
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <!-- Firmas -->
-            <div class="col-lg-12" *ngIf="false">
-                <mat-card class="b-1 shadow-none">
-                    <mat-card-header>
-                        <mat-card-title>Firmas </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="b-t-1">
-                        <div class="row">
-                            <div class="col-sm-6 col-lg-3" *ngFor="let firma of informacionData['firmas']">
-                                <mat-card class="cardWithShadow productcard overflow-hidden">
-                                    <a>
-                                        <img src="{{ firma.url }}" alt="imgSrc" class="w-100" mat-card-image />
-                                    </a>
-
-                                    <mat-list style="max-width: 100%">
-                                        <mat-list-item style="text-align: center;">
-                                            <span matListItemTitle class="f-s-16 f-w-600">{{firma.tipo}}</span>
-                                            <span matListItemLine class="mat-body-1">{{firma.nombreFirma }}</span>
-                                            <span matListItemLine class="mat-body-1">{{firma.fechaRegistro |
-                                                date}}</span>
-
-                                        </mat-list-item>
-                                    </mat-list>
-                                </mat-card>
-                            </div>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-
-            <hr style="border-color:black;">
-
-
-
-            <div class="row" *ngIf="false">
-                <div class="col-sm-6 col-lg-3" *ngFor="let productcard of item['imagenes']">
-                    <mat-card class="cardWithShadow productcard overflow-hidden">
-                        <a>
-                            <img src="{{ productcard.url }}" alt="imgSrc" class="w-100" mat-card-image />
-                        </a>
-                        <mat-card-content class="p-b-24 p-t-12 position-relative">
-                            <button mat-mini-fab color="primary" class="icon-30 cart-btn" matTooltip="Eliminar">
-                                <!-- <i-tabler name="trash" class="icon-16"></i-tabler> -->
-                            </button>
-                            <mat-card-title class="mat-headline-2 f-s-16 m-b-4">{{
-                                productcard.title
-                                }}</mat-card-title>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <h6 class="mat-body-2 f-w-600">{{ productcard.fechaRegistro | date }}</h6>
-                                    <span class="f-s-14 m-l-4 text-decoration-line-through"></span>
-                                </div>
-
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
-            </div>
-
-
-        </section>
-    </section>
-
+<!-- Lightbox -->
+<div class="lightbox-overlay" *ngIf="imgAmpliadaUrl" (click)="cerrarImagen()">
+    <div class="lightbox-content" (click)="$event.stopPropagation()" (wheel)="onLightboxWheel($event)">
+        <button mat-icon-button class="lightbox-close" (click)="cerrarImagen()" matTooltip="Cerrar">
+            <mat-icon>close</mat-icon>
+        </button>
+        <div class="lightbox-zoom-container"
+             (mousedown)="onDragStart($event)"
+             (mousemove)="onDragMove($event)"
+             (mouseup)="onDragEnd()"
+             (mouseleave)="onDragEnd()">
+            <img [src]="imgAmpliadaUrl" alt="Imagen ampliada" class="lightbox-img"
+                 [style.transform]="'scale(' + zoomLevel + ') translate(' + imgTranslateX + 'px,' + imgTranslateY + 'px)'"
+                 [style.cursor]="zoomLevel > 1 ? 'grab' : 'default'" />
+        </div>
+        <div class="lightbox-actions">
+            <button mat-icon-button matTooltip="Alejar" (click)="zoomOut()" [disabled]="zoomLevel <= 1"><mat-icon>zoom_out</mat-icon></button>
+            <span class="zoom-label">{{ (zoomLevel * 100) | number:'1.0-0' }}%</span>
+            <button mat-icon-button matTooltip="Acercar" (click)="zoomIn()"><mat-icon>zoom_in</mat-icon></button>
+            <button mat-icon-button matTooltip="Restablecer" (click)="resetZoom()" [disabled]="zoomLevel === 1"><mat-icon>fit_screen</mat-icon></button>
+            <button mat-flat-button color="primary" (click)="descargarImagen(imgAmpliadaUrl!)">
+                <mat-icon>download</mat-icon> Descargar
+            </button>
+        </div>
+    </div>
 </div>

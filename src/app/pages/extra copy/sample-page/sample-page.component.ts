@@ -77,6 +77,7 @@ export class AppSamplePageComponent implements OnInit {
   displayedColumns: string[] = ['select','id', 'assigned', 'name', 'priority', 'budget','firmas', 'accion'];
   displayedColumnsReporte: string[] = ['select', 'usuario', 'descripcion', 'hotel', 'fechaRegistro', 'firmas'];
   selection = new SelectionModel<any>(true, []);
+  isLoading = false;
 
   dataSource2 = new MatTableDataSource([]);
 
@@ -304,6 +305,15 @@ export class AppSamplePageComponent implements OnInit {
         this.dataSource2 = new MatTableDataSource(value);
       },
     })
+  }
+
+  getTipoClass(tipo: string): string {
+    if (!tipo) return 'chip-default';
+    if (tipo === 'Recorrido') return 'chip-recorrido';
+    if (tipo === 'Baja') return 'chip-baja';
+    if (tipo.includes('Preventivo')) return 'chip-preventivo';
+    if (tipo.includes('Correctivo')) return 'chip-correctivo';
+    return 'chip-default';
   }
 
 }

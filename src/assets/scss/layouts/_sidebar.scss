@@ -4,6 +4,8 @@
   transition: swift-ease-out(width);
   position: absolute;
   overflow-x: hidden;
+  border-right: 1px solid $borderColor;
+  background-color: $sidebarbg;
 }
 
 .branding {

@@ -25,6 +25,16 @@ export class AppDetalleReporteComponent implements OnInit {
   private readonly _reporte = inject(ReportesService);
   private readonly router = inject(Router);
 
+  imgAmpliadaUrl: string | null = null;
+  zoomLevel = 1;
+  imgTranslateX = 0;
+  imgTranslateY = 0;
+  private isDragging = false;
+  private dragStartX = 0;
+  private dragStartY = 0;
+  private dragOriginX = 0;
+  private dragOriginY = 0;
+
 
   displayedColumns: string[] = ['assigned', 'name', 'priority', 'budget'];
 
@@ -78,6 +88,62 @@ export class AppDetalleReporteComponent implements OnInit {
 
   back(): void {
     this.router.navigate(['/reportesAlta/lista']);
+  }
+
+  ampliarImagen(url: string): void {
+    this.imgAmpliadaUrl = url;
+    this.resetZoom();
+  }
+
+  cerrarImagen(): void {
+    this.imgAmpliadaUrl = null;
+    this.resetZoom();
+  }
+
+  zoomIn(): void  { this.zoomLevel = Math.min(this.zoomLevel + 0.25, 5); }
+  zoomOut(): void { this.zoomLevel = Math.max(this.zoomLevel - 0.25, 1); if (this.zoomLevel === 1) { this.imgTranslateX = 0; this.imgTranslateY = 0; } }
+  resetZoom(): void { this.zoomLevel = 1; this.imgTranslateX = 0; this.imgTranslateY = 0; }
+
+  onLightboxWheel(e: WheelEvent): void {
+    e.preventDefault();
+    e.deltaY < 0 ? this.zoomIn() : this.zoomOut();
+  }
+
+  onDragStart(e: MouseEvent): void {
+    if (this.zoomLevel <= 1) return;
+    this.isDragging = true;
+    this.dragStartX = e.clientX;
+    this.dragStartY = e.clientY;
+    this.dragOriginX = this.imgTranslateX;
+    this.dragOriginY = this.imgTranslateY;
+  }
+
+  onDragMove(e: MouseEvent): void {
+    if (!this.isDragging) return;
+    this.imgTranslateX = this.dragOriginX + (e.clientX - this.dragStartX) / this.zoomLevel;
+    this.imgTranslateY = this.dragOriginY + (e.clientY - this.dragStartY) / this.zoomLevel;
+  }
+
+  onDragEnd(): void { this.isDragging = false; }
+
+  descargarImagen(url: string): void {
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.download = 'imagen';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+
+  getTipoClass(tipo: string): string {
+    if (!tipo) return 'chip-default';
+    if (tipo === 'Recorrido') return 'chip-recorrido';
+    if (tipo === 'Baja') return 'chip-baja';
+    if (tipo.includes('Preventivo')) return 'chip-preventivo';
+    if (tipo.includes('Correctivo')) return 'chip-correctivo';
+    return 'chip-default';
   }
 
   pdf() {
