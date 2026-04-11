@@ -1,19 +1,10 @@
-import { Component, ViewEncapsulation, ViewChild, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import * as XLSX from 'xlsx';
+import { Component, ViewChild, OnInit, AfterViewInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl } from '@angular/forms';
-
-export interface productsData {
-  id: number;
-  imagePath: string;
-  uname: string;
-  position: string;
-  productName: string;
-  budget: number;
-  priority: string;
-}
 import * as _moment from 'moment';
 
 const moment = _moment;
@@ -32,7 +23,7 @@ export const MY_FORMATS = {
 
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepicker } from '@angular/material/datepicker';
 import { ReporteService } from '../services/reporte.service';
 
 @Component({
@@ -50,41 +41,35 @@ import { ReporteService } from '../services/reporte.service';
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class ListaReportesComponent {
+export class ListaReportesComponent implements OnInit, AfterViewInit {
   private readonly _reporte = inject(ReporteService);
   private readonly router = inject(Router);
-  displayedColumns: string[] = ['select','id', 'assigned', 'name', 'priority', 'budget', 'firmas','accion'];
-  displayedColumnsReporte: string[] = ['select', 'usuario', 'descripcion', 'hotel', 'fechaRegistro', 'firmas'];
+  private readonly _snackBar = inject(MatSnackBar);
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  displayedColumns: string[] = ['select', 'id', 'assigned', 'name', 'priority', 'budget', 'firmas', 'accion'];
   selection = new SelectionModel<any>(true, []);
+  dataSource2 = new MatTableDataSource<any>([]);
+  isLoading = false;
 
-  dataSource2 = new MatTableDataSource([]);
-
-
-  //Date
-  info: any
   date = new FormControl(moment());
-  dp: any
-
-
-  mes: any
-  anio: any
-  hotel: any
+  mes: any;
+  anio: any;
   toppings: any = new FormControl('');
-
-  toppingList: string[] = ['Extra cheese', 'Mushroom', 'Onion', 'Pepperoni', 'Sausage', 'Tomato'];
-
-
-  hoteles: any = [];
+  hoteles: any[] = [];
   hotelesSeleccionados: any;
   
 
-  // constructor(private readonly _reporte:ReporteService){
-  // }
   ngOnInit(): void {
-    this.mes = moment().month()
+    this.mes = moment().month();
     this.anio = moment().year();
     this.getReportes();
     this.getHoteles();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource2.paginator = this.paginator;
   }
 
   setMonthAndYear(normalizedMonthAndYear: any, datepicker: MatDatepicker<any>) {
@@ -92,161 +77,124 @@ export class ListaReportesComponent {
     ctrlValue.month(normalizedMonthAndYear.month());
     ctrlValue.year(normalizedMonthAndYear.year());
     this.date.setValue(ctrlValue);
-    this.mes = this.date.value?.month()
+    this.mes = this.date.value?.month();
     this.anio = this.date.value?.year();
     datepicker.close();
+    this.buscar();
   }
 
   getReportes() {
-    const filtros: any = {
-      mes: this.mes + 1,
-      anio: this.anio,
-      hotel: ''
-    }
+    this.isLoading = true;
+    const filtros: any = { mes: this.mes + 1, anio: this.anio, hotel: '' };
     this._reporte.reportesFiltro(filtros).subscribe({
       next: (value: any) => {
         this.dataSource2 = new MatTableDataSource(value);
+        this.dataSource2.paginator = this.paginator;
+        this.isLoading = false;
       },
-      error: (err) => {
-
+      error: () => {
+        this.isLoading = false;
+        this._snackBar.open('Error al cargar los reportes', 'Cerrar', { duration: 4000 });
       },
-    })
-
+    });
   }
 
   getHoteles() {
     this._reporte.hotelesLista().subscribe({
-      next: (value: any) => {
-        this.hoteles = value
+      next: (value: any) => { this.hoteles = value; },
+      error: () => {
+        this._snackBar.open('Error al cargar la lista de hoteles', 'Cerrar', { duration: 4000 });
       },
-      error: (err) => {
-
-      },
-    })
+    });
   }
   getRecord(dato: any) {
     this.router.navigate(['/reportes/detalle', dato.idReporte]);
   }
 
-  exportexcel(): void {
-
-    const fileName = 'ExcelSheet.xlsx';
-    /* table id is passed over here */
-    let element = document.getElementById('table');
-
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
-
-    /* generate workbook and add the worksheet */
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-    /* save to file */
-    XLSX.writeFile(wb, fileName);
-
-  }
-
   exportData() {
-    var selectedRows: any = this.selection['_selected']
+    const selectedRows: any[] = this.selection.selected;
+    if (!selectedRows.length) {
+      this._snackBar.open('Selecciona al menos un reporte para exportar', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
-    var rows = [['ID','EQUIPO','REPORTE' ,'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','USUARIO','OBSERVACIÓN', 'RECOMENDACIONES','DIAGNÓSTICO TÉCNICO','FALLAS DETECTADAS DURANTE EL SERVICIO','FIRMA DE CONFORMIDAD','COMENTARIO A LA ENTREGA DEL EQUIPO','COMENTARIO DE GERENCIA','NO CRÍTICO','CRÍTICO','FIRMAS'],];
-    selectedRows.forEach(async (element: any) => {
-      console.log("Element", element);
-      
-      let criBajo = 0
-      let criAlto = 0
-      let firmas=element['firmas'].length
+    const rows: any[][] = [['ID', 'EQUIPO', 'REPORTE', 'MARCA', 'MODELO', 'N° SERIE', 'ÁREA', 'CRITICIDAD', 'HOTEL', 'USUARIO', 'OBSERVACIÓN', 'RECOMENDACIONES', 'DIAGNÓSTICO TÉCNICO', 'FALLAS DETECTADAS DURANTE EL SERVICIO', 'FIRMA DE CONFORMIDAD', 'COMENTARIO A LA ENTREGA DEL EQUIPO', 'COMENTARIO DE GERENCIA', 'NO CRÍTICO', 'CRÍTICO', 'FIRMAS']];
+    selectedRows.forEach((element: any) => {
+      let criBajo = 0;
+      let criAlto = 0;
+      const firmas = element['firmas'].length;
 
-
-      for (var i = 0; i < element['observaciones'].length; ++i) {
-        var aux = []
-        criBajo = element['observaciones'][i]['criticidad'] == 'Bajo' ? criBajo + 1 : criBajo;
-        criAlto = element['observaciones'][i]['criticidad'] == 'Alto' ? criAlto + 1 : criAlto;
-
-        aux.push(element['idReporte']) //ID REPORTE
-        aux.push(element['observaciones'][i]['equipo']) //EQUIPO
-        aux.push(element['observaciones'][i]['tipoReporte']) //EQUIPO
-        aux.push(element['observaciones'][i]['marca']) //MARCA
-        aux.push(element['observaciones'][i]['modelo']) //MODELO
-        aux.push(element['observaciones'][i]['numeroSerie']) //N° SERIE
-        aux.push(element['observaciones'][i]['area']) //ÁREA
-        aux.push(element['observaciones'][i]['criticidad']) //CRITICIDAD
-        aux.push(element['hoteles']['nombre']) //HOTEL
-        aux.push(element['usuario']['nombre']) //Usuario
-        aux.push(element['observaciones'][i]['observacion']) //OBSERVACIÓN
-        aux.push(element['observaciones'][i]['comentarios'].map((e: any) => { return e.comentario+'/' }).toString()) //RECOMENDACIONES(COMENTARIOS)
-        const esMantenimiento = element['observaciones'][i]['tipoReporte']?.includes('Mantenimiento');
-        const esPreventivo = element['observaciones'][i]['tipoReporte'] === 'Mantenimiento Preventivo';
-        aux.push(esMantenimiento ? element['observaciones'][i]['diagnosticoTecnico'] : '') //DIAGNÓSTICO TÉCNICO
-        aux.push(esMantenimiento ? element['observaciones'][i]['fallaDetectadaDuraSer'] : '') //FALLAS DETECTADAS DURANTE EL SERVICIO
-        aux.push(esPreventivo ? (element['observaciones'][i]['fimaConformidad'] === true ? 'SI' : 'NO') : '') //FIRMA DE CONFORMIDAD (solo Preventivo)
-        aux.push(esMantenimiento ? element['observaciones'][i]['comentariosEntregaEquip'] : '') //COMENTARIO A LA ENTREGA DEL EQUIPO
-        aux.push('') //comentario(recomendacion general)
-        rows.push(aux)
+      for (let i = 0; i < element['observaciones'].length; ++i) {
+        const obs = element['observaciones'][i];
+        criBajo = obs['criticidad'] === 'Bajo' ? criBajo + 1 : criBajo;
+        criAlto = obs['criticidad'] === 'Alto' ? criAlto + 1 : criAlto;
+        const esMantenimiento = obs['tipoReporte']?.includes('Mantenimiento');
+        const esPreventivo = obs['tipoReporte'] === 'Mantenimiento Preventivo';
+        rows.push([
+          element['idReporte'],
+          obs['equipo'],
+          obs['tipoReporte'],
+          obs['marca'],
+          obs['modelo'],
+          obs['numeroSerie'],
+          obs['area'],
+          obs['criticidad'],
+          element['hoteles']['nombre'],
+          element['usuario']['nombre'],
+          obs['observacion'],
+          obs['comentarios'].map((e: any) => e.comentario + '/').toString(),
+          esMantenimiento ? obs['diagnosticoTecnico'] : '',
+          esMantenimiento ? obs['fallaDetectadaDuraSer'] : '',
+          esPreventivo ? (obs['fimaConformidad'] === true ? 'SI' : 'NO') : '',
+          esMantenimiento ? obs['comentariosEntregaEquip'] : '',
+          '',
+        ]);
       }
 
-      var aux = []
-      aux.push('') //ID
-      aux.push('') //EQUIPO
-      aux.push('') //MARCA
-      aux.push('') //MODELO
-      aux.push('') //N° SERIE
-      aux.push('') //ÁREA
-      aux.push('') //CRITICIDAD
-      aux.push('') //HOTEL
-      aux.push('') //USUARIO
-      aux.push('') //OBSERVACIÓN
-      aux.push('') //RECOMENDACIONES(COMENTARIOS)
-      aux.push('') //DIAGNÓSTICO TÉCNICO
-      aux.push('') //FALLAS DETECTADAS DURANTE EL SERVICIO
-      aux.push('') //FIRMA DE CONFORMIDAD
-      aux.push('') //COMENTARIO A LA ENTREGA DEL EQUIPO
-      aux.push(element['recomendaciones']) //comentario(recomendacion general)
-      aux.push(criBajo) //CRÍTICO BAJO
-      aux.push(criAlto) //CRÍTICO ALTO
-      aux.push(firmas) //FIRMAS
-
-      rows.push(aux)
+      rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', element['recomendaciones'], criBajo, criAlto, firmas]);
     });
-    this.exportToCsv('reporte.csv', rows)
 
+    this.exportToCsv('reporte.csv', rows);
+    this._snackBar.open(`${selectedRows.length} reporte(s) exportado(s) correctamente`, 'OK', { duration: 3000 });
   }
 
-  exportToCsv(filename: any, rows: any) {
-    var processRow = function (row: any) {
-      var finalVal = '';
-      for (var j = 0; j < row.length; j++) {
-        var innerValue = row[j] === null || row[j] === undefined ? '' : row[j].toString();
-        if (row[j] instanceof Date) {
-          innerValue = row[j].toLocaleString();
-        };
-        var result = innerValue.replace(/"/g, '""');
-        if (result.search(/("|,|\n)/g) >= 0)
-          result = '"' + result + '"';
-        if (j > 0)
-          finalVal += ',';
+  exportToCsv(filename: string, rows: any[][]) {
+    const processRow = (row: any[]) => {
+      let finalVal = '';
+      for (let j = 0; j < row.length; j++) {
+        let innerValue = row[j] === null || row[j] === undefined ? '' : row[j].toString();
+        if (row[j] instanceof Date) { innerValue = row[j].toLocaleString(); }
+        let result = innerValue.replace(/"/g, '""');
+        if (result.search(/("|,|\n)/g) >= 0) result = '"' + result + '"';
+        if (j > 0) finalVal += ',';
         finalVal += result;
       }
       return finalVal + '\n';
     };
 
-    var csvFile = '';
-    for (var i = 0; i < rows.length; i++) {
-      csvFile += processRow(rows[i]);
-    }
+    let csvFile = '';
+    for (const row of rows) { csvFile += processRow(row); }
 
-    var blob = new Blob(["\uFEFF" + csvFile], { type: 'text/csv;charset=utf-8;' });
-
-    var link = document.createElement("a");
-    if (link.download !== undefined) { // feature detection
-      // Browsers that support HTML5 download attribute
-      var url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", filename);
+    const blob = new Blob(['\uFEFF' + csvFile], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
+  }
+
+  getTipoClass(tipo: string): string {
+    if (!tipo) return 'chip-default';
+    if (tipo === 'Recorrido') return 'chip-recorrido';
+    if (tipo === 'Baja') return 'chip-baja';
+    if (tipo === 'Mantenimiento Preventivo') return 'chip-preventivo';
+    if (tipo === 'Mantenimiento Correctivo') return 'chip-correctivo';
+    return 'chip-default';
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -281,24 +229,27 @@ export class ListaReportesComponent {
 
   buscar() {
     this.selection.clear();
-
-    this.hotelesSeleccionados = '';
-
-    const datos: any = this.toppings.value
-    this.hotelesSeleccionados = datos ? datos.map((e: any) => { return e.idHotel }) : ''
+    this.isLoading = true;
+    const datos: any = this.toppings.value;
+    this.hotelesSeleccionados = datos ? datos.map((e: any) => e.idHotel) : '';
 
     const filtros: any = {
       mes: this.mes + 1,
       anio: this.anio,
-      hotel: this.hotelesSeleccionados.toString() || ''
-    }
+      hotel: this.hotelesSeleccionados.toString() || '',
+    };
 
     this._reporte.reportesFiltro(filtros).subscribe({
       next: (value: any) => {
-
         this.dataSource2 = new MatTableDataSource(value);
+        this.dataSource2.paginator = this.paginator;
+        this.isLoading = false;
       },
-    })
+      error: () => {
+        this.isLoading = false;
+        this._snackBar.open('Error al buscar los reportes', 'Cerrar', { duration: 4000 });
+      },
+    });
   }
 
 }
