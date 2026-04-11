@@ -148,8 +148,10 @@ export class ListaReportesComponent {
   exportData() {
     var selectedRows: any = this.selection['_selected']
 
-    var rows = [['ID','EQUIPO','REPORTE' ,'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','USUARIO','OBSERVACIÓN', 'RECOMENDACIONES','COMENTARIO DE GERENCIA','NO CRÍTICO','CRÍTICO','FIRMAS'],];
+    var rows = [['ID','EQUIPO','REPORTE' ,'MARCA', 'MODELO', 'N° SERIE', 'ÁREA','CRITICIDAD','HOTEL','USUARIO','OBSERVACIÓN', 'RECOMENDACIONES','DIAGNÓSTICO TÉCNICO','FALLAS DETECTADAS DURANTE EL SERVICIO','FIRMA DE CONFORMIDAD','COMENTARIO A LA ENTREGA DEL EQUIPO','COMENTARIO DE GERENCIA','NO CRÍTICO','CRÍTICO','FIRMAS'],];
     selectedRows.forEach(async (element: any) => {
+      console.log("Element", element);
+      
       let criBajo = 0
       let criAlto = 0
       let firmas=element['firmas'].length
@@ -172,6 +174,12 @@ export class ListaReportesComponent {
         aux.push(element['usuario']['nombre']) //Usuario
         aux.push(element['observaciones'][i]['observacion']) //OBSERVACIÓN
         aux.push(element['observaciones'][i]['comentarios'].map((e: any) => { return e.comentario+'/' }).toString()) //RECOMENDACIONES(COMENTARIOS)
+        const esMantenimiento = element['observaciones'][i]['tipoReporte']?.includes('Mantenimiento');
+        const esPreventivo = element['observaciones'][i]['tipoReporte'] === 'Mantenimiento Preventivo';
+        aux.push(esMantenimiento ? element['observaciones'][i]['diagnosticoTecnico'] : '') //DIAGNÓSTICO TÉCNICO
+        aux.push(esMantenimiento ? element['observaciones'][i]['fallaDetectadaDuraSer'] : '') //FALLAS DETECTADAS DURANTE EL SERVICIO
+        aux.push(esPreventivo ? (element['observaciones'][i]['fimaConformidad'] === true ? 'SI' : 'NO') : '') //FIRMA DE CONFORMIDAD (solo Preventivo)
+        aux.push(esMantenimiento ? element['observaciones'][i]['comentariosEntregaEquip'] : '') //COMENTARIO A LA ENTREGA DEL EQUIPO
         aux.push('') //comentario(recomendacion general)
         rows.push(aux)
       }
@@ -188,7 +196,10 @@ export class ListaReportesComponent {
       aux.push('') //USUARIO
       aux.push('') //OBSERVACIÓN
       aux.push('') //RECOMENDACIONES(COMENTARIOS)
-      aux.push('') //RECOMENDACIONES(COMENTARIOS)
+      aux.push('') //DIAGNÓSTICO TÉCNICO
+      aux.push('') //FALLAS DETECTADAS DURANTE EL SERVICIO
+      aux.push('') //FIRMA DE CONFORMIDAD
+      aux.push('') //COMENTARIO A LA ENTREGA DEL EQUIPO
       aux.push(element['recomendaciones']) //comentario(recomendacion general)
       aux.push(criBajo) //CRÍTICO BAJO
       aux.push(criAlto) //CRÍTICO ALTO
