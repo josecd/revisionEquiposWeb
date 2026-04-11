@@ -1,8 +1,7 @@
-import { Component, ViewChild, OnInit, AfterViewInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl } from '@angular/forms';
 import * as _moment from 'moment';
@@ -41,12 +40,10 @@ import { ReporteService } from '../services/reporte.service';
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class ListaReportesComponent implements OnInit, AfterViewInit {
+export class ListaReportesComponent implements OnInit {
   private readonly _reporte = inject(ReporteService);
   private readonly router = inject(Router);
   private readonly _snackBar = inject(MatSnackBar);
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   displayedColumns: string[] = ['select', 'id', 'assigned', 'name', 'priority', 'budget', 'firmas', 'accion'];
   selection = new SelectionModel<any>(true, []);
@@ -68,10 +65,6 @@ export class ListaReportesComponent implements OnInit, AfterViewInit {
     this.getHoteles();
   }
 
-  ngAfterViewInit(): void {
-    this.dataSource2.paginator = this.paginator;
-  }
-
   setMonthAndYear(normalizedMonthAndYear: any, datepicker: MatDatepicker<any>) {
     const ctrlValue = this.date.value!;
     ctrlValue.month(normalizedMonthAndYear.month());
@@ -89,7 +82,6 @@ export class ListaReportesComponent implements OnInit, AfterViewInit {
     this._reporte.reportesFiltro(filtros).subscribe({
       next: (value: any) => {
         this.dataSource2 = new MatTableDataSource(value);
-        this.dataSource2.paginator = this.paginator;
         this.isLoading = false;
       },
       error: () => {
@@ -242,7 +234,6 @@ export class ListaReportesComponent implements OnInit, AfterViewInit {
     this._reporte.reportesFiltro(filtros).subscribe({
       next: (value: any) => {
         this.dataSource2 = new MatTableDataSource(value);
-        this.dataSource2.paginator = this.paginator;
         this.isLoading = false;
       },
       error: () => {

@@ -74,3 +74,43 @@
 .side-img {
   margin-top: -60px;
 }
+
+/* Usuario + Cerrar sesión en el fondo del sidebar */
+.sidebar-user {
+  margin-top: auto;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.sidebar-user-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: #90a4ae;
+}
+
+.sidebar-user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #37474f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-logout {
+  width: 100%;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 600;
+}
