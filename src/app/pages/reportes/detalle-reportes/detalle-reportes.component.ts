@@ -231,6 +231,7 @@ export class DetalleReportesComponent implements OnChanges {
     this.editData[obs.idObservacion] = {
       observacion: obs.observacion,
       diagnosticoTecnico: obs.diagnosticoTecnico,
+      motivoDanio: obs.motivoDanio,
       fallaDetectadaDuraSer: obs.fallaDetectadaDuraSer,
       comentariosEntregaEquip: obs.comentariosEntregaEquip,
     };

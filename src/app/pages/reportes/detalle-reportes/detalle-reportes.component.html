@@ -184,7 +184,7 @@
             </div>
         </div>
 
-        <div class="col-detalle-field" *ngIf="item?.motivoDanio">
+        <div class="col-detalle-field" *ngIf="item?.motivoDanio && !editModes[item.idObservacion]">
             <div class="detalle-field-card">
                 <span class="field-label">Motivo Daño</span>
                 <span class="field-value">{{item?.motivoDanio}}</span>
@@ -193,8 +193,8 @@
 
     </div>
 
-    <!-- Diagnóstico Técnico -->
-    <div class="col-lg-12" *ngIf="item?.diagnosticoTecnico || editModes[item.idObservacion]">
+    <!-- Diagnóstico Técnico (Baja, Mtt. Preventivo, Mtt. Correctivo) -->
+    <div class="col-lg-12" *ngIf="item?.diagnosticoTecnico || (editModes[item.idObservacion] && item.tipoReporte !== 'Recorrido')">
         <mat-card class="b-1 shadow-none">
             <mat-card-header>
                 <mat-card-title>Diagnóstico Técnico</mat-card-title>
@@ -221,8 +221,36 @@
         </mat-card>
     </div>
 
-    <!-- Fallas detectadas durante el servicio -->
-    <div class="col-lg-12" *ngIf="item?.fallaDetectadaDuraSer || editModes[item.idObservacion]">
+    <!-- Motivo Daño (solo Baja) -->
+    <div class="col-lg-12" *ngIf="item?.motivoDanio || (editModes[item.idObservacion] && item.tipoReporte === 'Baja')">
+        <mat-card class="b-1 shadow-none">
+            <mat-card-header>
+                <mat-card-title>Motivo Daño</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="b-t-1 p-16">
+                <ng-container *ngIf="!editModes[item.idObservacion]">
+                    <p class="detalle-texto">{{item?.motivoDanio}}</p>
+                </ng-container>
+                <ng-container *ngIf="editModes[item.idObservacion]">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                        <mat-label>Motivo Daño</mat-label>
+                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
+                            [(ngModel)]="editData[item.idObservacion].motivoDanio"></textarea>
+                    </mat-form-field>
+                    <button mat-stroked-button
+                        (click)="verificarCampo(item.idObservacion, 'motivoDanio')"
+                        [disabled]="verificando[item.idObservacion + '-motivoDanio']">
+                        <mat-spinner *ngIf="verificando[item.idObservacion + '-motivoDanio']" diameter="16" style="display:inline-block; margin-right:6px;"></mat-spinner>
+                        <mat-icon *ngIf="!verificando[item.idObservacion + '-motivoDanio']">auto_fix_high</mat-icon>
+                        {{ verificando[item.idObservacion + '-motivoDanio'] ? 'Verificando...' : 'Verificar texto' }}
+                    </button>
+                </ng-container>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Fallas detectadas durante el servicio (solo Mtt. Preventivo y Correctivo) -->
+    <div class="col-lg-12" *ngIf="item?.fallaDetectadaDuraSer || (editModes[item.idObservacion] && (item.tipoReporte === 'Mantenimiento Preventivo' || item.tipoReporte === 'Mantenimiento Correctivo'))">
         <mat-card class="b-1 shadow-none">
             <mat-card-header>
                 <mat-card-title>Fallas detectadas durante el servicio</mat-card-title>
@@ -249,8 +277,8 @@
         </mat-card>
     </div>
 
-    <!-- Comentario a la entrega del equipo -->
-    <div class="col-lg-12" *ngIf="item?.comentariosEntregaEquip || editModes[item.idObservacion]">
+    <!-- Comentario a la entrega del equipo (solo Mtt. Preventivo y Correctivo) -->
+    <div class="col-lg-12" *ngIf="item?.comentariosEntregaEquip || (editModes[item.idObservacion] && (item.tipoReporte === 'Mantenimiento Preventivo' || item.tipoReporte === 'Mantenimiento Correctivo'))">
         <mat-card class="b-1 shadow-none">
             <mat-card-header>
                 <mat-card-title>Comentario a la entrega del equipo</mat-card-title>
