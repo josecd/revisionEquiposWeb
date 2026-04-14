@@ -1,0 +1,22 @@
+/* Desktop: header vacío, solo visible en mobile para el hamburger */
+@media (min-width: 960px) {
+  .topbar {
+    display: none !important;
+  }
+}
+
+.topbar {
+  background-color: $toolbar;
+  position: sticky;
+  top: 0;
+  z-index: 9;
+  height: $header-height;
+}
+
+.topbar-dd {
+  min-width: 200px !important;
+}
+
+.object-cover {
+  object-fit: cover;
+}

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, ViewChild, OnInit, ElementRef, inject, Input } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild, OnInit, OnChanges, SimpleChanges, ElementRef, inject, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import jsPDF from 'jspdf';
 
@@ -18,7 +18,7 @@ export interface Section {
   templateUrl: './detalle-reportes.component.html',
   styleUrls: ['./detalle-reportes.component.scss']
 })
-export class DetalleReportesComponent {
+export class DetalleReportesComponent implements OnChanges {
 
   @ViewChild('pdfTable', { static: false }) el!: ElementRef;
   displayedColumns: string[] = ['assigned', 'name', 'priority', 'budget'];
@@ -72,6 +72,12 @@ export class DetalleReportesComponent {
     this.getReportes()
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['id'] && !changes['id'].firstChange) {
+      this.getReportes();
+    }
+  }
+
   getReportes() {
     this._reporte.getReporteID(this.id).subscribe({
       next: (value: any) => {
@@ -88,7 +94,7 @@ export class DetalleReportesComponent {
 
 
   back(): void {
-    this.router.navigate(['/reportesAlta/lista']);
+    this.router.navigate(['/reportes/lista']);
   }
 
   ampliarImagen(url: string): void {

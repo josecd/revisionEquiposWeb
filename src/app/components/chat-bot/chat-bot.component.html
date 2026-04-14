@@ -1,0 +1,83 @@
+<div class="chat-bot-wrapper">
+  <!-- FAB Button -->
+  <button mat-fab class="chat-fab" (click)="toggle()" color="primary" aria-label="Abrir asistente">
+    <i-tabler [name]="isOpen ? 'x' : 'robot'" class="icon-24"></i-tabler>
+  </button>
+
+  <!-- Chat Panel -->
+  <div class="chat-panel" [class.chat-panel--open]="isOpen">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="chat-header-content">
+        <i-tabler name="robot" class="icon-20 header-icon"></i-tabler>
+        <span class="header-title">Asistente de Mantenimiento</span>
+      </div>
+      <button mat-icon-button (click)="clearChat()" matTooltip="Limpiar historial" class="clear-btn">
+        <i-tabler name="trash" class="icon-16"></i-tabler>
+      </button>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" #messagesContainer>
+      <div *ngIf="messages.length === 0" class="chat-empty">
+        <i-tabler name="message-circle" class="icon-40 empty-icon"></i-tabler>
+        <p>Pregúntame sobre los mantenimientos, técnicos u hoteles del sistema.</p>
+      </div>
+
+      <div
+        *ngFor="let msg of messages"
+        class="chat-bubble"
+        [class.chat-bubble--user]="msg.role === 'user'"
+        [class.chat-bubble--bot]="msg.role === 'assistant'"
+      >
+        <div class="bubble-content">
+          <ng-container *ngFor="let seg of msg.segments">
+            <button
+              *ngIf="seg.reportId; else plainText"
+              class="report-link"
+              (click)="goToReport(seg.reportId)"
+              matTooltip="Ver reporte {{ seg.reportId }}"
+            >
+              <i-tabler name="file-text" class="icon-12"></i-tabler>
+              {{ seg.text }}
+            </button>
+            <ng-template #plainText>{{ seg.text }}</ng-template>
+          </ng-container>
+        </div>
+      </div>
+
+      <div *ngIf="isLoading" class="chat-bubble chat-bubble--bot">
+        <div class="bubble-content typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input-area">
+      <mat-form-field appearance="outline" class="chat-input-field">
+        <textarea
+          matInput
+          [(ngModel)]="currentMessage"
+          (keydown)="onKeydown($event)"
+          placeholder="Escribe tu pregunta..."
+          rows="2"
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="1"
+          cdkAutosizeMaxRows="4"
+          [disabled]="isLoading"
+        ></textarea>
+      </mat-form-field>
+      <button
+        mat-icon-button
+        color="primary"
+        (click)="send()"
+        [disabled]="!currentMessage.trim() || isLoading"
+        class="send-btn"
+        matTooltip="Enviar"
+      >
+        <i-tabler name="send" class="icon-20"></i-tabler>
+      </button>
+    </div>
+  </div>
+</div>

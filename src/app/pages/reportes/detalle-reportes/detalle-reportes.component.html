@@ -278,6 +278,31 @@
 
 </section>
 
+<!-- Firmas -->
+<div class="col-lg-12">
+    <mat-card class="b-1 shadow-none">
+        <mat-card-header>
+            <mat-card-title>Firmas</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="b-t-1 p-16">
+            <div *ngIf="informacionData['firmas']?.length > 0; else sinFirmas" class="firmas-grid">
+                <div *ngFor="let firma of informacionData['firmas']" class="firma-card">
+                    <img [src]="firma.url" alt="Firma" class="firma-img" />
+                    <div class="firma-nombre">{{ firma.nombreFirma }}</div>
+                    <div class="firma-tipo">{{ firma.tipo }}</div>
+                    <div class="firma-fecha">{{ firma.fechaRegistro | date:'dd/MM/yyyy' }}</div>
+                </div>
+            </div>
+            <ng-template #sinFirmas>
+                <p class="detalle-texto" style="color: #e53935;">
+                    <mat-icon style="vertical-align: middle; font-size: 18px;">pending</mat-icon>
+                    Sin firmas — pendiente de firma
+                </p>
+            </ng-template>
+        </mat-card-content>
+    </mat-card>
+</div>
+
 <!-- Comentario general del reporte -->
 <div class="col-lg-12" *ngIf="informacionData.recomendaciones">
     <mat-card class="b-1 shadow-none">
