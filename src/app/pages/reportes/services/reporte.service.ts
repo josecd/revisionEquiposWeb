@@ -48,4 +48,20 @@ export class ReporteService {
   reportesFiltroexs(data:any){
     return this._httpClient.post(environment.API_URL+`/reportes/filterExcel`,data);
   }
+
+  editarObservacion(id: number, data: any) {
+    return this._httpClient.patch(environment.API_URL + `/observaciones/${id}`, data);
+  }
+
+  editarComentario(id: number, data: any) {
+    return this._httpClient.put(environment.API_URL + `/observaciones/editarComentario/${id}`, data);
+  }
+
+  agregarComentario(data: any) {
+    return this._httpClient.post(environment.API_URL + `/observaciones/agregarComentario`, data);
+  }
+
+  textoCorreccionIA(data: { text: string }) {
+    return this._httpClient.post(environment.API_URL + `/users/correccion`, data);
+  }
 }

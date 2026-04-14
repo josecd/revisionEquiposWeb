@@ -22,9 +22,19 @@ export class TokenService {
   }
 
 
+  saveUserId(id: number) {
+    localStorage.setItem('userId', String(id));
+  }
+
+  getUserId(): number | null {
+    const val = localStorage.getItem('userId');
+    return val ? Number(val) : null;
+  }
+
   clearToken() {
     localStorage.removeItem('token');
     localStorage.removeItem('userName');
+    localStorage.removeItem('userId');
   }
 
 

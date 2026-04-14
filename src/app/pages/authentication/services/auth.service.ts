@@ -28,6 +28,7 @@ export class AuthService {
         tap(response => {
           this.tokenService.saveToken(response.access_token)
           this.tokenService.saveNamUSe(response.user['nombre'])
+          this.tokenService.saveUserId(response.user['idUsuario'])
           this.authState.next(response.user['nombre'])
         }),
         // switchMap(_ => this.getProfile()),

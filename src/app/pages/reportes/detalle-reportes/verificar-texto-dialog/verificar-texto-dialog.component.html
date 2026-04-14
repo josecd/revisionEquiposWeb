@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>Texto Verificado por IA</h2>
+<mat-dialog-content>
+  <p class="mat-body-2" style="color: #78909c; margin-bottom: 12px;">
+    Puedes editar el texto sugerido antes de aceptarlo.
+  </p>
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>Texto sugerido (editable)</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="textoPropuesto"
+      cdkTextareaAutosize
+      cdkAutosizeMinRows="4"
+      cdkAutosizeMaxRows="14"
+    ></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cancelar()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="aceptar()" style="margin-left: 8px;">Aceptar</button>
+</mat-dialog-actions>

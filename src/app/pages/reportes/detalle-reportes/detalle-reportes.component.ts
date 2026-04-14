@@ -6,6 +6,11 @@ import { ReportesService } from 'src/app/services/reportes.service';
  
 import html2canvas from "html2canvas";
 import { ReporteService } from '../services/reporte.service';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TokenService } from 'src/app/services/token.service';
+import { VerificarTextoDialogComponent } from './verificar-texto-dialog/verificar-texto-dialog.component';
+import { EditarComentarioDialogComponent } from './editar-comentario-dialog/editar-comentario-dialog.component';
 
 
 export interface Section {
@@ -54,7 +59,16 @@ export class DetalleReportesComponent implements OnChanges {
 
   private readonly _reporte = inject(ReporteService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly tokenService = inject(TokenService);
   @Input() id?: number;
+
+  // --- Estado de edición inline ---
+  editModes: { [idObservacion: number]: boolean } = {};
+  editData: { [idObservacion: number]: any } = {};
+  guardando: { [idObservacion: number]: boolean } = {};
+  verificando: { [key: string]: boolean } = {};  // key: `${idObservacion}-${campo}`
 
   imgAmpliadaUrl: string | null = null;
   zoomLevel = 1;
@@ -206,5 +220,121 @@ export class DetalleReportesComponent implements OnChanges {
       templatTipo = 'Mantenimiento'
     }
     this._reporte.verPDF(this.id, templatTipo)
+  }
+
+  // -------------------------------------------------------
+  // Edición inline de observaciones
+  // -------------------------------------------------------
+
+  activarEdicion(obs: any): void {
+    this.editModes[obs.idObservacion] = true;
+    this.editData[obs.idObservacion] = {
+      observacion: obs.observacion,
+      diagnosticoTecnico: obs.diagnosticoTecnico,
+      fallaDetectadaDuraSer: obs.fallaDetectadaDuraSer,
+      comentariosEntregaEquip: obs.comentariosEntregaEquip,
+    };
+  }
+
+  cancelarEdicion(idObservacion: number): void {
+    this.editModes[idObservacion] = false;
+    delete this.editData[idObservacion];
+  }
+
+  guardarObservacion(idObservacion: number): void {
+    this.guardando[idObservacion] = true;
+    this._reporte.editarObservacion(idObservacion, this.editData[idObservacion]).subscribe({
+      next: () => {
+        this.guardando[idObservacion] = false;
+        this.editModes[idObservacion] = false;
+        this.snackBar.open('Observación actualizada', 'Cerrar', { duration: 3000 });
+        this.getReportes();
+      },
+      error: () => {
+        this.guardando[idObservacion] = false;
+        this.snackBar.open('Error al guardar. Intente de nuevo.', 'Cerrar', { duration: 4000 });
+      },
+    });
+  }
+
+  verificarCampo(idObservacion: number, campo: string): void {
+    const texto: string = this.editData[idObservacion]?.[campo] || '';
+    if (!texto.trim()) {
+      this.snackBar.open('No hay texto para verificar', 'Cerrar', { duration: 2500 });
+      return;
+    }
+    const key = `${idObservacion}-${campo}`;
+    this.verificando[key] = true;
+    this._reporte.textoCorreccionIA({ text: texto }).subscribe({
+      next: (res: any) => {
+        this.verificando[key] = false;
+        const dialogRef = this.dialog.open(VerificarTextoDialogComponent, {
+          data: { textoCorregido: res['response'] },
+          width: '560px',
+        });
+        dialogRef.afterClosed().subscribe((resultado: string | null) => {
+          if (resultado != null) {
+            this.editData[idObservacion][campo] = resultado;
+          }
+        });
+      },
+      error: () => {
+        this.verificando[key] = false;
+        this.snackBar.open('Error al contactar el servicio de IA', 'Cerrar', { duration: 4000 });
+      },
+    });
+  }
+
+  // -------------------------------------------------------
+  // Comentarios / Recomendaciones
+  // -------------------------------------------------------
+
+  abrirEditarComentario(comentario: any, idObservacion: number): void {
+    const dialogRef = this.dialog.open(EditarComentarioDialogComponent, {
+      data: { comentario: comentario.comentario, modo: 'editar' },
+      width: '520px',
+    });
+    dialogRef.afterClosed().subscribe((texto: string | null) => {
+      if (!texto) return;
+      this._reporte.editarComentario(comentario.idObservacionComentario, {
+        comentario: texto,
+        observacionId: idObservacion,
+      }).subscribe({
+        next: () => {
+          this.snackBar.open('Recomendación actualizada', 'Cerrar', { duration: 3000 });
+          this.getReportes();
+        },
+        error: () => {
+          this.snackBar.open('Error al actualizar. Intente de nuevo.', 'Cerrar', { duration: 4000 });
+        },
+      });
+    });
+  }
+
+  abrirAgregarComentario(idObservacion: number): void {
+    const dialogRef = this.dialog.open(EditarComentarioDialogComponent, {
+      data: { comentario: '', modo: 'agregar' },
+      width: '520px',
+    });
+    dialogRef.afterClosed().subscribe((texto: string | null) => {
+      if (!texto) return;
+      const userId = this.tokenService.getUserId();
+      const fecha = new Date();
+      const dateString = fecha.toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
+      this._reporte.agregarComentario({
+        comentario: texto,
+        userId,
+        observacionId: idObservacion,
+        dateString,
+      }).subscribe({
+        next: () => {
+          this.snackBar.open('Recomendación agregada', 'Cerrar', { duration: 3000 });
+          this.getReportes();
+        },
+        error: () => {
+          this.snackBar.open('Error al agregar. Intente de nuevo.', 'Cerrar', { duration: 4000 });
+        },
+      });
+    });
   }
 }

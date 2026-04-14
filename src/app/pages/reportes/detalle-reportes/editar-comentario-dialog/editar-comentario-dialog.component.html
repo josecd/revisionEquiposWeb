@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>{{ data.modo === 'editar' ? 'Editar recomendación' : 'Agregar recomendación' }}</h2>
+<mat-dialog-content>
+  <mat-form-field appearance="outline" style="width: 100%; min-width: 420px; margin-top: 8px;">
+    <mat-label>Recomendación</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="texto"
+      cdkTextareaAutosize
+      cdkAutosizeMinRows="3"
+      cdkAutosizeMaxRows="10"
+    ></textarea>
+  </mat-form-field>
+  <div style="margin-top: 4px;">
+    <button mat-stroked-button (click)="verificarTexto()" [disabled]="verificando">
+      <mat-spinner *ngIf="verificando" diameter="16" style="display:inline-block; margin-right:6px;"></mat-spinner>
+      <mat-icon *ngIf="!verificando">auto_fix_high</mat-icon>
+      {{ verificando ? 'Verificando...' : 'Verificar texto' }}
+    </button>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cancelar()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="guardar()" style="margin-left: 8px;">Guardar</button>
+</mat-dialog-actions>
