@@ -66,8 +66,9 @@
       </p>
 
       <div class="table-responsive m-t-16">
-        <table id="table" mat-table [dataSource]="dataSource2" class="w-100">
+        <table id="table" mat-table [dataSource]="dataSource2" multiTemplateDataRows class="w-100">
 
+          <!-- Checkbox -->
           <ng-container matColumnDef="select">
             <th mat-header-cell *matHeaderCellDef>
               <mat-checkbox (change)="$event ? toggleAllRows() : null"
@@ -83,11 +84,27 @@
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">ID</th>
-            <td mat-cell *matCellDef="let element" class="mat-body-1">{{ element.idReporte }}</td>
+          <!-- Expand toggle (siempre visible) -->
+          <ng-container matColumnDef="expand">
+            <th mat-header-cell *matHeaderCellDef class="col-expand"></th>
+            <td mat-cell *matCellDef="let element" class="col-expand">
+              <button mat-icon-button class="expand-btn"
+                      (click)="expandedElement = expandedElement === element ? null : element; $event.stopPropagation()"
+                      [attr.aria-label]="expandedElement === element ? 'Colapsar' : 'Expandir'">
+                <mat-icon class="expand-icon" [class.rotated]="expandedElement === element">
+                  keyboard_arrow_down
+                </mat-icon>
+              </button>
+            </td>
           </ng-container>
 
+          <!-- ID -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 col-hide-sm">ID</th>
+            <td mat-cell *matCellDef="let element" class="mat-body-1 col-hide-sm">{{ element.idReporte }}</td>
+          </ng-container>
+
+          <!-- Tipo -->
           <ng-container matColumnDef="assigned">
             <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Tipo</th>
             <td mat-cell *matCellDef="let element">
@@ -97,6 +114,7 @@
             </td>
           </ng-container>
 
+          <!-- Descripción -->
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Descripción</th>
             <td mat-cell *matCellDef="let element" class="mat-body-1 truncate-text"
@@ -105,21 +123,24 @@
             </td>
           </ng-container>
 
+          <!-- Hotel -->
           <ng-container matColumnDef="priority">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Hotel</th>
-            <td mat-cell *matCellDef="let element" class="mat-body-1">{{ element.hoteles.nombre }}</td>
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 col-hide-md">Hotel</th>
+            <td mat-cell *matCellDef="let element" class="mat-body-1 col-hide-md">{{ element.hoteles.nombre }}</td>
           </ng-container>
 
+          <!-- Fecha -->
           <ng-container matColumnDef="budget">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Fecha</th>
-            <td mat-cell *matCellDef="let element" class="mat-body-1">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 col-hide-md">Fecha</th>
+            <td mat-cell *matCellDef="let element" class="mat-body-1 col-hide-md">
               {{ element.fechaRegistro | date:'dd/MM/yyyy' }}
             </td>
           </ng-container>
 
+          <!-- Firmas -->
           <ng-container matColumnDef="firmas">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Firmas</th>
-            <td mat-cell *matCellDef="let element" class="mat-body-1">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 col-hide-md">Firmas</th>
+            <td mat-cell *matCellDef="let element" class="mat-body-1 col-hide-md">
               <span class="firmas-badge" *ngIf="element.firmas.length > 0">
                 <mat-icon style="color: #43a047;">verified</mat-icon>
                 {{ element.firmas.length }}
@@ -128,20 +149,86 @@
             </td>
           </ng-container>
 
+          <!-- Acción -->
           <ng-container matColumnDef="accion">
             <th mat-header-cell *matHeaderCellDef>Acciones</th>
             <td mat-cell *matCellDef="let element">
               <button mat-raised-button color="primary" style="height: 38px;"
-                (click)="getRecord(element)">
+                (click)="getRecord(element); $event.stopPropagation()">
                 <mat-icon>open_in_new</mat-icon> Ver
               </button>
             </td>
           </ng-container>
 
+          <!-- ─── Fila de detalle colapsable ─── -->
+          <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="detail-cell">
+              <div class="detail-panel"
+                   [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'">
+                <ng-container *ngIf="element === expandedElement">
+                <div class="detail-content">
+
+                  <!-- Fila de chips: Técnico / Turno / Observaciones -->
+                  <div class="detail-chips-row">
+                    <span class="detail-chip">
+                      <mat-icon class="chip-icon">person</mat-icon>
+                      <span class="chip-label">Técnico:</span>
+                      <span class="chip-value">{{ element.usuario?.nombre || '—' }}</span>
+                    </span>
+                    <span class="detail-chip" *ngIf="element.turno">
+                      <mat-icon class="chip-icon">schedule</mat-icon>
+                      <span class="chip-label">Turno:</span>
+                      <span class="chip-value">{{ element.turno }}</span>
+                    </span>
+                    <span class="detail-chip">
+                      <mat-icon class="chip-icon">devices</mat-icon>
+                      <span class="chip-label">Equipos revisados:</span>
+                      <span class="chip-value">{{ element.observaciones?.length || 0 }}</span>
+                    </span>
+                  </div>
+
+                  <!-- Firmas detalladas -->
+                  <div class="detail-firmas" *ngIf="element.firmas?.length > 0">
+                    <span class="detail-firmas-label">
+                      <mat-icon style="font-size:15px;width:15px;height:15px;color:#43a047;vertical-align:middle;">verified</mat-icon>
+                      Firmas:
+                    </span>
+                    <span class="detail-firma-item" *ngFor="let firma of element.firmas">
+                      {{ firma.nombreFirma }} — <em>{{ firma.tipo }}</em>
+                    </span>
+                  </div>
+                  <div class="detail-firmas" *ngIf="element.firmas?.length === 0">
+                    <span style="color:#90a4ae;font-size:13px;">Sin firmas — pendiente</span>
+                  </div>
+
+                  <!-- Recomendaciones -->
+                  <div class="detail-recomendaciones" *ngIf="element.recomendaciones">
+                    <span class="detail-label">Recomendaciones:</span>
+                    <span class="detail-value">{{ element.recomendaciones }}</span>
+                  </div>
+
+                  <div class="detail-actions">
+                    <button mat-raised-button color="primary"
+                            (click)="getRecord(element); $event.stopPropagation()">
+                      <mat-icon>open_in_new</mat-icon> Ver detalle
+                    </button>
+                  </div>
+
+                </div>
+                </ng-container>
+              </div>
+            </td>
+          </ng-container>
+
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"
-            (click)="selection.toggle(row)"
-            [class.selected-row]="selection.isSelected(row)">
+              class="main-row"
+              [class.selected-row]="selection.isSelected(row)"
+              [class.expanded-row]="expandedElement === row"
+              (click)="selection.toggle(row)">
+          </tr>
+          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']"
+              class="detail-row-tr">
           </tr>
 
           <tr class="mat-row" *matNoDataRow>
@@ -155,6 +242,13 @@
 
         </table>
       </div>
+
+      <mat-paginator
+        [pageSizeOptions]="[20, 50, 100]"
+        pageSize="20"
+        showFirstLastButtons
+        aria-label="Seleccionar página de reportes">
+      </mat-paginator>
 
     </mat-card-content>
   </mat-card>

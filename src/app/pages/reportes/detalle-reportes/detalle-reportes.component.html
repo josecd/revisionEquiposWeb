@@ -1,460 +1,347 @@
-<div id="pdfTable" #pdfTable *ngIf="informacionData">
+<!-- ── Cargando ─────────────────────────────────────────────────── -->
+<div *ngIf="isLoading" class="detalle-loading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <div class="detalle-loading-body">
+    <div class="skeleton skeleton-title"></div>
+    <div class="skeleton skeleton-meta"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card skeleton-card--short"></div>
+  </div>
+</div>
 
+<div id="pdfTable" #pdfTable *ngIf="informacionData && !isLoading">
 
-    <mat-card class="cardWithShadow">
-        <mat-card-content class="p-24">
-            <div class="d-flex align-items-center w-100" style="gap: 12px; flex-wrap: wrap;">
-                <button mat-icon-button color="primary" (click)="back()" matTooltip="Regresar a la lista">
-                    <mat-icon>arrow_back</mat-icon>
-                </button>
-                <div>
-                    <div class="mat-subtitle-1 f-w-700" style="font-size: 18px;">
-                        Reporte #{{informacionData.idReporte}}
-                    </div>
-                    <span class="tipo-chip" [ngClass]="getTipoClass(informacionData.tipoReporte)">
-                        {{informacionData.tipoReporte}}
-                    </span>
-                </div>
-                <div class="m-l-auto d-flex" style="gap: 8px;">
-                    <button mat-stroked-button color="primary" (click)="verPDF()">
-                        <mat-icon>picture_as_pdf</mat-icon> Ver PDF
-                    </button>
-                    <button mat-flat-button color="primary" (click)="descargarPDF()">
-                        <mat-icon>download</mat-icon> Descargar PDF
-                    </button>
-                </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
-
-    <div class="row">
-        <div class="col">
-            <mat-card class="cardWithShadow">
-                <mat-card-header style="justify-content: center;">
-                    <mat-card-title style="font-size: 13px; color: #78909c; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Hotel</mat-card-title>
-                </mat-card-header>
-                <mat-card-content style="text-align: center; padding-top: 4px;">
-                    <span class="mat-subtitle-1 f-w-600" *ngIf="informacionData">{{informacionData.hoteles[0].nombre}}</span>
-                </mat-card-content>
-            </mat-card>
-        </div>
-
-        <div class="col" *ngIf="informacionData.turno">
-            <mat-card class="cardWithShadow">
-                <mat-card-header style="justify-content: center;">
-                    <mat-card-title style="font-size: 13px; color: #78909c; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Turno</mat-card-title>
-                </mat-card-header>
-                <mat-card-content style="text-align: center; padding-top: 4px;">
-                    <span class="mat-subtitle-1 f-w-600">{{informacionData.turno}}</span>
-                </mat-card-content>
-            </mat-card>
-        </div>
-
-        <div class="col">
-            <mat-card class="cardWithShadow">
-                <mat-card-header style="justify-content: center;">
-                    <mat-card-title style="font-size: 13px; color: #78909c; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Fecha</mat-card-title>
-                </mat-card-header>
-                <mat-card-content style="text-align: center; padding-top: 4px;">
-                    <span class="mat-subtitle-1 f-w-600">{{informacionData.fechaRegistro | date:'dd/MM/yyyy'}}</span>
-                </mat-card-content>
-            </mat-card>
-        </div>
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <div class="report-header">
+    <button mat-icon-button (click)="back()" matTooltip="Regresar">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="report-header-title">
+      <span class="report-title-num">Reporte #{{informacionData.idReporte}}</span>
+      <span class="tipo-chip" [ngClass]="getTipoClass(informacionData.tipoReporte)">
+        {{informacionData.tipoReporte}}
+      </span>
     </div>
+    <div class="report-header-actions">
+      <button mat-stroked-button color="primary" (click)="verPDF()">
+        <mat-icon>picture_as_pdf</mat-icon> Ver PDF
+      </button>
+      <button mat-flat-button color="primary" (click)="descargarPDF()">
+        <mat-icon>download</mat-icon> Descargar PDF
+      </button>
+    </div>
+  </div>
 
+  <!-- ── Meta strip ─────────────────────────────────────────────────── -->
+  <div class="meta-strip">
+    <div class="meta-pill">
+      <mat-icon class="meta-icon">hotel</mat-icon>
+      <div class="meta-info">
+        <span class="meta-label">Hotel</span>
+        <span class="meta-value">{{informacionData.hoteles[0].nombre}}</span>
+      </div>
+    </div>
+    <div class="meta-pill" *ngIf="informacionData.turno">
+      <mat-icon class="meta-icon">schedule</mat-icon>
+      <div class="meta-info">
+        <span class="meta-label">Turno</span>
+        <span class="meta-value">{{informacionData.turno}}</span>
+      </div>
+    </div>
+    <div class="meta-pill">
+      <mat-icon class="meta-icon">calendar_today</mat-icon>
+      <div class="meta-info">
+        <span class="meta-label">Fecha</span>
+        <span class="meta-value">{{informacionData.fechaRegistro | date:'dd/MM/yyyy'}}</span>
+      </div>
+    </div>
+  </div>
 
-<section *ngFor="let item of informacionData['observaciones']">
+  <!-- ── Observaciones ──────────────────────────────────────────────── -->
+  <div class="obs-card"
+       *ngFor="let item of informacionData['observaciones']"
+       [class.obs-card--alto]="item.criticidad === 'Alto' && !editModes[item.idObservacion]"
+       [class.obs-card--bajo]="item.criticidad !== 'Alto' && !editModes[item.idObservacion]"
+       [class.obs-card--editing]="editModes[item.idObservacion]">
 
-    <!-- Barra de acciones de edición por observación -->
-    <div class="obs-edit-toolbar">
-        <span class="obs-edit-label">Ítem {{item?.identificador}}</span>
+    <!-- Card head -->
+    <div class="obs-card-head">
+      <div class="obs-num">{{item.identificador}}</div>
+      <div class="obs-equip-info">
+        <span class="obs-equip-name">{{item.equipo}}</span>
+        <span class="criticidad-badge"
+              [class.criticidad-alto]="item.criticidad === 'Alto'"
+              [class.criticidad-bajo]="item.criticidad !== 'Alto'">
+          <mat-icon class="badge-icon">{{item.criticidad === 'Alto' ? 'warning' : 'check_circle'}}</mat-icon>
+          {{item.criticidad}}
+        </span>
+      </div>
+      <div class="obs-card-actions">
         <ng-container *ngIf="!editModes[item.idObservacion]">
-            <button mat-icon-button color="primary" (click)="activarEdicion(item)" matTooltip="Editar observación">
-                <mat-icon>edit</mat-icon>
-            </button>
+          <button mat-icon-button color="primary" (click)="activarEdicion(item)" matTooltip="Editar observación">
+            <mat-icon>edit</mat-icon>
+          </button>
         </ng-container>
         <ng-container *ngIf="editModes[item.idObservacion]">
-            <button mat-flat-button color="primary" (click)="guardarObservacion(item.idObservacion)" [disabled]="guardando[item.idObservacion]">
-                <mat-icon>save</mat-icon> Guardar
-            </button>
-            <button mat-stroked-button (click)="cancelarEdicion(item.idObservacion)" style="margin-left: 8px;">Cancelar</button>
+          <button mat-flat-button color="primary"
+                  (click)="guardarObservacion(item.idObservacion)"
+                  [disabled]="guardando[item.idObservacion]">
+            <mat-spinner *ngIf="guardando[item.idObservacion]" diameter="16" style="display:inline-block;margin-right:4px;"></mat-spinner>
+            <mat-icon *ngIf="!guardando[item.idObservacion]">save</mat-icon>
+            Guardar
+          </button>
+          <button mat-stroked-button (click)="cancelarEdicion(item.idObservacion)">Cancelar</button>
         </ng-container>
+      </div>
     </div>
 
-    <!-- Campos del equipo -->
-    <div class="detalle-fields-row">
-
-        <div class="col-detalle-field" *ngIf="item?.identificador">
-            <div class="detalle-field-card">
-                <span class="field-label">Ítem</span>
-                <span class="field-value">{{item?.identificador}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.equipo">
-            <div class="detalle-field-card">
-                <span class="field-label">Equipo</span>
-                <span class="field-value">{{item?.equipo}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.marca">
-            <div class="detalle-field-card">
-                <span class="field-label">Marca</span>
-                <span class="field-value">{{item?.marca}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.modelo">
-            <div class="detalle-field-card">
-                <span class="field-label">Modelo</span>
-                <span class="field-value">{{item?.modelo}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.numeroSerie">
-            <div class="detalle-field-card">
-                <span class="field-label">N° Serie</span>
-                <span class="field-value">{{item?.numeroSerie}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.area">
-            <div class="detalle-field-card">
-                <span class="field-label">Área</span>
-                <span class="field-value">{{item?.area}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.criticidad">
-            <div class="detalle-field-card">
-                <span class="field-label">Criticidad</span>
-                <span class="field-value" [style.color]="item.criticidad === 'Alto' ? '#e53935' : 'inherit'">
-                    {{item?.criticidad}}
-                </span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.adquisicionEquipo">
-            <div class="detalle-field-card">
-                <span class="field-label">Adquisición Equipo</span>
-                <span class="field-value">{{item?.adquisicionEquipo}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.ubicacion">
-            <div class="detalle-field-card">
-                <span class="field-label">Ubicación</span>
-                <span class="field-value">{{item?.ubicacion}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.oc">
-            <div class="detalle-field-card">
-                <span class="field-label">OC</span>
-                <span class="field-value">{{item?.oc}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.sapID">
-            <div class="detalle-field-card">
-                <span class="field-label">SAP-ID</span>
-                <span class="field-value">{{item?.sapID}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.tecEsp">
-            <div class="detalle-field-card">
-                <span class="field-label">Técnico Especialista</span>
-                <span class="field-value">{{item?.tecEsp}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.fechaInicio">
-            <div class="detalle-field-card">
-                <span class="field-label">Fecha Inicio</span>
-                <span class="field-value">{{item?.fechaInicio}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.fechaFinaliza">
-            <div class="detalle-field-card">
-                <span class="field-label">Fecha Fin</span>
-                <span class="field-value">{{item?.fechaFinaliza}}</span>
-            </div>
-        </div>
-
-        <div class="col-detalle-field" *ngIf="item?.motivoDanio && !editModes[item.idObservacion]">
-            <div class="detalle-field-card">
-                <span class="field-label">Motivo Daño</span>
-                <span class="field-value">{{item?.motivoDanio}}</span>
-            </div>
-        </div>
-
+    <!-- Field pills -->
+    <div class="obs-fields">
+      <span class="field-pill" *ngIf="item?.marca"><b>Marca</b> {{item.marca}}</span>
+      <span class="field-pill" *ngIf="item?.modelo"><b>Modelo</b> {{item.modelo}}</span>
+      <span class="field-pill" *ngIf="item?.numeroSerie"><b>N° Serie</b> {{item.numeroSerie}}</span>
+      <span class="field-pill" *ngIf="item?.area"><b>Área</b> {{item.area}}</span>
+      <span class="field-pill" *ngIf="item?.ubicacion"><b>Ubicación</b> {{item.ubicacion}}</span>
+      <span class="field-pill" *ngIf="item?.adquisicionEquipo"><b>Adquisición</b> {{item.adquisicionEquipo}}</span>
+      <span class="field-pill" *ngIf="item?.oc"><b>OC</b> {{item.oc}}</span>
+      <span class="field-pill" *ngIf="item?.sapID"><b>SAP-ID</b> {{item.sapID}}</span>
+      <span class="field-pill" *ngIf="item?.tecEsp"><b>Técnico</b> {{item.tecEsp}}</span>
+      <span class="field-pill" *ngIf="item?.fechaInicio"><b>Inicio</b> {{item.fechaInicio}}</span>
+      <span class="field-pill" *ngIf="item?.fechaFinaliza"><b>Fin</b> {{item.fechaFinaliza}}</span>
+      <span class="field-pill" *ngIf="item?.motivoDanio && !editModes[item.idObservacion]"><b>Motivo Daño</b> {{item.motivoDanio}}</span>
     </div>
 
-    <!-- Diagnóstico Técnico (Baja, Mtt. Preventivo, Mtt. Correctivo) -->
-    <div class="col-lg-12" *ngIf="item?.diagnosticoTecnico || (editModes[item.idObservacion] && item.tipoReporte !== 'Recorrido')">
-        <mat-card class="b-1 shadow-none">
-            <mat-card-header>
-                <mat-card-title>Diagnóstico Técnico</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="b-t-1 p-16">
-                <ng-container *ngIf="!editModes[item.idObservacion]">
-                    <p class="detalle-texto">{{item?.diagnosticoTecnico}}</p>
-                </ng-container>
-                <ng-container *ngIf="editModes[item.idObservacion]">
-                    <mat-form-field appearance="outline" style="width: 100%;">
-                        <mat-label>Diagnóstico Técnico</mat-label>
-                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
-                            [(ngModel)]="editData[item.idObservacion].diagnosticoTecnico"></textarea>
-                    </mat-form-field>
-                    <button mat-stroked-button
-                        (click)="verificarCampo(item.idObservacion, 'diagnosticoTecnico')"
-                        [disabled]="verificando[item.idObservacion + '-diagnosticoTecnico']">
-                        <mat-spinner *ngIf="verificando[item.idObservacion + '-diagnosticoTecnico']" diameter="16" style="display:inline-block; margin-right:6px;"></mat-spinner>
-                        <mat-icon *ngIf="!verificando[item.idObservacion + '-diagnosticoTecnico']">auto_fix_high</mat-icon>
-                        {{ verificando[item.idObservacion + '-diagnosticoTecnico'] ? 'Verificando...' : 'Verificar texto' }}
-                    </button>
-                </ng-container>
-            </mat-card-content>
-        </mat-card>
-    </div>
+    <!-- Text sections -->
+    <div class="obs-body">
 
-    <!-- Motivo Daño (solo Baja) -->
-    <div class="col-lg-12" *ngIf="item?.motivoDanio || (editModes[item.idObservacion] && item.tipoReporte === 'Baja')">
-        <mat-card class="b-1 shadow-none">
-            <mat-card-header>
-                <mat-card-title>Motivo Daño</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="b-t-1 p-16">
-                <ng-container *ngIf="!editModes[item.idObservacion]">
-                    <p class="detalle-texto">{{item?.motivoDanio}}</p>
-                </ng-container>
-                <ng-container *ngIf="editModes[item.idObservacion]">
-                    <mat-form-field appearance="outline" style="width: 100%;">
-                        <mat-label>Motivo Daño</mat-label>
-                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
-                            [(ngModel)]="editData[item.idObservacion].motivoDanio"></textarea>
-                    </mat-form-field>
-                    <button mat-stroked-button
-                        (click)="verificarCampo(item.idObservacion, 'motivoDanio')"
-                        [disabled]="verificando[item.idObservacion + '-motivoDanio']">
-                        <mat-spinner *ngIf="verificando[item.idObservacion + '-motivoDanio']" diameter="16" style="display:inline-block; margin-right:6px;"></mat-spinner>
-                        <mat-icon *ngIf="!verificando[item.idObservacion + '-motivoDanio']">auto_fix_high</mat-icon>
-                        {{ verificando[item.idObservacion + '-motivoDanio'] ? 'Verificando...' : 'Verificar texto' }}
-                    </button>
-                </ng-container>
-            </mat-card-content>
-        </mat-card>
-    </div>
-
-    <!-- Fallas detectadas durante el servicio (solo Mtt. Preventivo y Correctivo) -->
-    <div class="col-lg-12" *ngIf="item?.fallaDetectadaDuraSer || (editModes[item.idObservacion] && (item.tipoReporte === 'Mantenimiento Preventivo' || item.tipoReporte === 'Mantenimiento Correctivo'))">
-        <mat-card class="b-1 shadow-none">
-            <mat-card-header>
-                <mat-card-title>Fallas detectadas durante el servicio</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="b-t-1 p-16">
-                <ng-container *ngIf="!editModes[item.idObservacion]">
-                    <p class="detalle-texto">{{item?.fallaDetectadaDuraSer}}</p>
-                </ng-container>
-                <ng-container *ngIf="editModes[item.idObservacion]">
-                    <mat-form-field appearance="outline" style="width: 100%;">
-                        <mat-label>Fallas detectadas</mat-label>
-                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
-                            [(ngModel)]="editData[item.idObservacion].fallaDetectadaDuraSer"></textarea>
-                    </mat-form-field>
-                    <button mat-stroked-button
-                        (click)="verificarCampo(item.idObservacion, 'fallaDetectadaDuraSer')"
-                        [disabled]="verificando[item.idObservacion + '-fallaDetectadaDuraSer']">
-                        <mat-spinner *ngIf="verificando[item.idObservacion + '-fallaDetectadaDuraSer']" diameter="16" style="display:inline-block; margin-right:6px;"></mat-spinner>
-                        <mat-icon *ngIf="!verificando[item.idObservacion + '-fallaDetectadaDuraSer']">auto_fix_high</mat-icon>
-                        {{ verificando[item.idObservacion + '-fallaDetectadaDuraSer'] ? 'Verificando...' : 'Verificar texto' }}
-                    </button>
-                </ng-container>
-            </mat-card-content>
-        </mat-card>
-    </div>
-
-    <!-- Comentario a la entrega del equipo (solo Mtt. Preventivo y Correctivo) -->
-    <div class="col-lg-12" *ngIf="item?.comentariosEntregaEquip || (editModes[item.idObservacion] && (item.tipoReporte === 'Mantenimiento Preventivo' || item.tipoReporte === 'Mantenimiento Correctivo'))">
-        <mat-card class="b-1 shadow-none">
-            <mat-card-header>
-                <mat-card-title>Comentario a la entrega del equipo</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="b-t-1 p-16">
-                <ng-container *ngIf="!editModes[item.idObservacion]">
-                    <p class="detalle-texto">{{item?.comentariosEntregaEquip}}</p>
-                </ng-container>
-                <ng-container *ngIf="editModes[item.idObservacion]">
-                    <mat-form-field appearance="outline" style="width: 100%;">
-                        <mat-label>Comentario a la entrega del equipo</mat-label>
-                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
-                            [(ngModel)]="editData[item.idObservacion].comentariosEntregaEquip"></textarea>
-                    </mat-form-field>
-                    <button mat-stroked-button
-                        (click)="verificarCampo(item.idObservacion, 'comentariosEntregaEquip')"
-                        [disabled]="verificando[item.idObservacion + '-comentariosEntregaEquip']">
-                        <mat-spinner *ngIf="verificando[item.idObservacion + '-comentariosEntregaEquip']" diameter="16" style="display:inline-block; margin-right:6px;"></mat-spinner>
-                        <mat-icon *ngIf="!verificando[item.idObservacion + '-comentariosEntregaEquip']">auto_fix_high</mat-icon>
-                        {{ verificando[item.idObservacion + '-comentariosEntregaEquip'] ? 'Verificando...' : 'Verificar texto' }}
-                    </button>
-                </ng-container>
-            </mat-card-content>
-        </mat-card>
-    </div>
-
-    <!-- Observaciones -->
-    <div class="col-lg-12">
-        <mat-card class="b-1 shadow-none">
-            <mat-card-header>
-                <mat-card-title>Observaciones</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="b-t-1 p-16">
-                <ng-container *ngIf="!editModes[item.idObservacion]">
-                    <p class="detalle-texto">{{item.observacion || 'No tiene observaciones'}}</p>
-                </ng-container>
-                <ng-container *ngIf="editModes[item.idObservacion]">
-                    <mat-form-field appearance="outline" style="width: 100%;">
-                        <mat-label>Observaciones</mat-label>
-                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
-                            [(ngModel)]="editData[item.idObservacion].observacion"></textarea>
-                    </mat-form-field>
-                    <button mat-stroked-button
-                        (click)="verificarCampo(item.idObservacion, 'observacion')"
-                        [disabled]="verificando[item.idObservacion + '-observacion']">
-                        <mat-spinner *ngIf="verificando[item.idObservacion + '-observacion']" diameter="16" style="display:inline-block; margin-right:6px;"></mat-spinner>
-                        <mat-icon *ngIf="!verificando[item.idObservacion + '-observacion']">auto_fix_high</mat-icon>
-                        {{ verificando[item.idObservacion + '-observacion'] ? 'Verificando...' : 'Verificar texto' }}
-                    </button>
-                </ng-container>
-            </mat-card-content>
-        </mat-card>
-    </div>
-
-    <!-- Recomendaciones -->
-    <div class="col-lg-12">
-        <mat-card class="b-1 shadow-none">
-            <mat-card-header>
-                <mat-card-title>Recomendaciones</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="b-t-1">
-                <mat-list *ngIf="item['comentarios']?.length > 0; else sinRecomendaciones">
-                    <mat-list-item *ngFor="let com of item['comentarios']">
-                        <mat-icon matListItemIcon>chevron_right</mat-icon>
-                        <span matListItemTitle class="f-s-15 f-w-600">{{com.comentario}}</span>
-                        <span matListItemLine class="mat-body-1">{{com.dateString}}</span>
-                        <button mat-icon-button matListItemMeta (click)="abrirEditarComentario(com, item.idObservacion)" matTooltip="Editar recomendación">
-                            <mat-icon>edit</mat-icon>
-                        </button>
-                    </mat-list-item>
-                </mat-list>
-                <ng-template #sinRecomendaciones>
-                    <p class="detalle-texto p-16">No tiene recomendaciones</p>
-                </ng-template>
-                <div style="padding: 8px 16px;">
-                    <button mat-stroked-button color="primary" (click)="abrirAgregarComentario(item.idObservacion)">
-                        <mat-icon>add</mat-icon> Agregar recomendación
-                    </button>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-
-    <!-- Evidencia Fotográfica -->
-    <div class="col-lg-12" *ngIf="item['imagenes']?.length > 0">
-        <mat-card class="b-1 shadow-none">
-            <mat-card-header>
-                <mat-card-title>Evidencia Fotográfica</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="b-t-1">
-                <div class="row">
-                    <div class="col-sm-6 col-lg-3" *ngFor="let itemimg of item['imagenes']">
-                        <mat-card class="cardWithShadow productcard overflow-hidden">
-                            <div class="img-wrapper" (click)="ampliarImagen(itemimg.url)">
-                                <img src="{{ itemimg.url }}" alt="imgSrc" class="w-100" mat-card-image />
-                                <div class="img-overlay"><mat-icon>zoom_in</mat-icon></div>
-                            </div>
-                            <mat-card-actions class="img-actions">
-                                <button mat-icon-button matTooltip="Ampliar" (click)="ampliarImagen(itemimg.url)"><mat-icon>zoom_in</mat-icon></button>
-                                <button mat-icon-button matTooltip="Descargar" (click)="descargarImagen(itemimg.url)"><mat-icon>download</mat-icon></button>
-                            </mat-card-actions>
-                            <mat-list style="max-width: 100%">
-                                <mat-list-item>
-                                    <span matListItemTitle class="f-s-14">{{itemimg.fechaRegistro | date:'dd/MM/yyyy'}}</span>
-                                </mat-list-item>
-                            </mat-list>
-                        </mat-card>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-
-</section>
-
-<!-- Firmas -->
-<div class="col-lg-12">
-    <mat-card class="b-1 shadow-none">
-        <mat-card-header>
-            <mat-card-title>Firmas</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="b-t-1 p-16">
-            <div *ngIf="informacionData['firmas']?.length > 0; else sinFirmas" class="firmas-grid">
-                <div *ngFor="let firma of informacionData['firmas']" class="firma-card">
-                    <img [src]="firma.url" alt="Firma" class="firma-img" />
-                    <div class="firma-nombre">{{ firma.nombreFirma }}</div>
-                    <div class="firma-tipo">{{ firma.tipo }}</div>
-                    <div class="firma-fecha">{{ firma.fechaRegistro | date:'dd/MM/yyyy' }}</div>
-                </div>
-            </div>
-            <ng-template #sinFirmas>
-                <p class="detalle-texto" style="color: #e53935;">
-                    <mat-icon style="vertical-align: middle; font-size: 18px;">pending</mat-icon>
-                    Sin firmas — pendiente de firma
-                </p>
-            </ng-template>
-        </mat-card-content>
-    </mat-card>
-</div>
-
-<!-- Comentario general del reporte -->
-<div class="col-lg-12" *ngIf="informacionData.recomendaciones">
-    <mat-card class="b-1 shadow-none">
-        <mat-card-header>
-            <mat-card-title>Comentario General</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="b-t-1 p-16">
-            <p class="detalle-texto">{{informacionData.recomendaciones}}</p>
-        </mat-card-content>
-    </mat-card>
-</div>
-
-
-<!-- Lightbox -->
-<div class="lightbox-overlay" *ngIf="imgAmpliadaUrl" (click)="cerrarImagen()">
-    <div class="lightbox-content" (click)="$event.stopPropagation()" (wheel)="onLightboxWheel($event)">
-        <button mat-icon-button class="lightbox-close" (click)="cerrarImagen()" matTooltip="Cerrar">
-            <mat-icon>close</mat-icon>
-        </button>
-        <div class="lightbox-zoom-container"
-             (mousedown)="onDragStart($event)"
-             (mousemove)="onDragMove($event)"
-             (mouseup)="onDragEnd()"
-             (mouseleave)="onDragEnd()">
-            <img [src]="imgAmpliadaUrl" alt="Imagen ampliada" class="lightbox-img"
-                 [style.transform]="'scale(' + zoomLevel + ') translate(' + imgTranslateX + 'px,' + imgTranslateY + 'px)'"
-                 [style.cursor]="zoomLevel > 1 ? 'grab' : 'default'" />
+      <!-- Diagnóstico Técnico -->
+      <div class="obs-section" *ngIf="item?.diagnosticoTecnico || (editModes[item.idObservacion] && item.tipoReporte !== 'Recorrido')">
+        <div class="obs-section-title">
+          <mat-icon>build</mat-icon> Diagnóstico Técnico
         </div>
-        <div class="lightbox-actions">
-            <button mat-icon-button matTooltip="Alejar" (click)="zoomOut()" [disabled]="zoomLevel <= 1"><mat-icon>zoom_out</mat-icon></button>
-            <span class="zoom-label">{{ (zoomLevel * 100) | number:'1.0-0' }}%</span>
-            <button mat-icon-button matTooltip="Acercar" (click)="zoomIn()"><mat-icon>zoom_in</mat-icon></button>
-            <button mat-icon-button matTooltip="Restablecer" (click)="resetZoom()" [disabled]="zoomLevel === 1"><mat-icon>fit_screen</mat-icon></button>
-            <button mat-flat-button color="primary" (click)="descargarImagen(imgAmpliadaUrl!)">
-                <mat-icon>download</mat-icon> Descargar
+        <ng-container *ngIf="!editModes[item.idObservacion]">
+          <p class="obs-text">{{item.diagnosticoTecnico}}</p>
+        </ng-container>
+        <ng-container *ngIf="editModes[item.idObservacion]">
+          <mat-form-field appearance="outline" class="obs-field">
+            <mat-label>Diagnóstico Técnico</mat-label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
+                      [(ngModel)]="editData[item.idObservacion].diagnosticoTecnico"></textarea>
+          </mat-form-field>
+          <button mat-stroked-button class="verify-btn"
+                  (click)="verificarCampo(item.idObservacion, 'diagnosticoTecnico')"
+                  [disabled]="verificando[item.idObservacion + '-diagnosticoTecnico']">
+            <mat-spinner *ngIf="verificando[item.idObservacion + '-diagnosticoTecnico']" diameter="16" style="display:inline-block;margin-right:6px;"></mat-spinner>
+            <mat-icon *ngIf="!verificando[item.idObservacion + '-diagnosticoTecnico']">auto_fix_high</mat-icon>
+            {{verificando[item.idObservacion + '-diagnosticoTecnico'] ? 'Verificando...' : 'Verificar con IA'}}
+          </button>
+        </ng-container>
+      </div>
+
+      <!-- Motivo Daño -->
+      <div class="obs-section" *ngIf="item?.motivoDanio || (editModes[item.idObservacion] && item.tipoReporte === 'Baja')">
+        <div class="obs-section-title">
+          <mat-icon>report_problem</mat-icon> Motivo Daño
+        </div>
+        <ng-container *ngIf="!editModes[item.idObservacion]">
+          <p class="obs-text">{{item.motivoDanio}}</p>
+        </ng-container>
+        <ng-container *ngIf="editModes[item.idObservacion]">
+          <mat-form-field appearance="outline" class="obs-field">
+            <mat-label>Motivo Daño</mat-label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
+                      [(ngModel)]="editData[item.idObservacion].motivoDanio"></textarea>
+          </mat-form-field>
+          <button mat-stroked-button class="verify-btn"
+                  (click)="verificarCampo(item.idObservacion, 'motivoDanio')"
+                  [disabled]="verificando[item.idObservacion + '-motivoDanio']">
+            <mat-spinner *ngIf="verificando[item.idObservacion + '-motivoDanio']" diameter="16" style="display:inline-block;margin-right:6px;"></mat-spinner>
+            <mat-icon *ngIf="!verificando[item.idObservacion + '-motivoDanio']">auto_fix_high</mat-icon>
+            {{verificando[item.idObservacion + '-motivoDanio'] ? 'Verificando...' : 'Verificar con IA'}}
+          </button>
+        </ng-container>
+      </div>
+
+      <!-- Fallas detectadas -->
+      <div class="obs-section" *ngIf="item?.fallaDetectadaDuraSer || (editModes[item.idObservacion] && (item.tipoReporte === 'Mantenimiento Preventivo' || item.tipoReporte === 'Mantenimiento Correctivo'))">
+        <div class="obs-section-title">
+          <mat-icon>error_outline</mat-icon> Fallas detectadas durante el servicio
+        </div>
+        <ng-container *ngIf="!editModes[item.idObservacion]">
+          <p class="obs-text">{{item.fallaDetectadaDuraSer}}</p>
+        </ng-container>
+        <ng-container *ngIf="editModes[item.idObservacion]">
+          <mat-form-field appearance="outline" class="obs-field">
+            <mat-label>Fallas detectadas</mat-label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
+                      [(ngModel)]="editData[item.idObservacion].fallaDetectadaDuraSer"></textarea>
+          </mat-form-field>
+          <button mat-stroked-button class="verify-btn"
+                  (click)="verificarCampo(item.idObservacion, 'fallaDetectadaDuraSer')"
+                  [disabled]="verificando[item.idObservacion + '-fallaDetectadaDuraSer']">
+            <mat-spinner *ngIf="verificando[item.idObservacion + '-fallaDetectadaDuraSer']" diameter="16" style="display:inline-block;margin-right:6px;"></mat-spinner>
+            <mat-icon *ngIf="!verificando[item.idObservacion + '-fallaDetectadaDuraSer']">auto_fix_high</mat-icon>
+            {{verificando[item.idObservacion + '-fallaDetectadaDuraSer'] ? 'Verificando...' : 'Verificar con IA'}}
+          </button>
+        </ng-container>
+      </div>
+
+      <!-- Comentario a la entrega del equipo -->
+      <div class="obs-section" *ngIf="item?.comentariosEntregaEquip || (editModes[item.idObservacion] && (item.tipoReporte === 'Mantenimiento Preventivo' || item.tipoReporte === 'Mantenimiento Correctivo'))">
+        <div class="obs-section-title">
+          <mat-icon>handshake</mat-icon> Comentario a la entrega del equipo
+        </div>
+        <ng-container *ngIf="!editModes[item.idObservacion]">
+          <p class="obs-text">{{item.comentariosEntregaEquip}}</p>
+        </ng-container>
+        <ng-container *ngIf="editModes[item.idObservacion]">
+          <mat-form-field appearance="outline" class="obs-field">
+            <mat-label>Comentario a la entrega del equipo</mat-label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
+                      [(ngModel)]="editData[item.idObservacion].comentariosEntregaEquip"></textarea>
+          </mat-form-field>
+          <button mat-stroked-button class="verify-btn"
+                  (click)="verificarCampo(item.idObservacion, 'comentariosEntregaEquip')"
+                  [disabled]="verificando[item.idObservacion + '-comentariosEntregaEquip']">
+            <mat-spinner *ngIf="verificando[item.idObservacion + '-comentariosEntregaEquip']" diameter="16" style="display:inline-block;margin-right:6px;"></mat-spinner>
+            <mat-icon *ngIf="!verificando[item.idObservacion + '-comentariosEntregaEquip']">auto_fix_high</mat-icon>
+            {{verificando[item.idObservacion + '-comentariosEntregaEquip'] ? 'Verificando...' : 'Verificar con IA'}}
+          </button>
+        </ng-container>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="obs-section">
+        <div class="obs-section-title">
+          <mat-icon>notes</mat-icon> Observaciones
+        </div>
+        <ng-container *ngIf="!editModes[item.idObservacion]">
+          <p class="obs-text">{{item.observacion || 'Sin observaciones'}}</p>
+        </ng-container>
+        <ng-container *ngIf="editModes[item.idObservacion]">
+          <mat-form-field appearance="outline" class="obs-field">
+            <mat-label>Observaciones</mat-label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
+                      [(ngModel)]="editData[item.idObservacion].observacion"></textarea>
+          </mat-form-field>
+          <button mat-stroked-button class="verify-btn"
+                  (click)="verificarCampo(item.idObservacion, 'observacion')"
+                  [disabled]="verificando[item.idObservacion + '-observacion']">
+            <mat-spinner *ngIf="verificando[item.idObservacion + '-observacion']" diameter="16" style="display:inline-block;margin-right:6px;"></mat-spinner>
+            <mat-icon *ngIf="!verificando[item.idObservacion + '-observacion']">auto_fix_high</mat-icon>
+            {{verificando[item.idObservacion + '-observacion'] ? 'Verificando...' : 'Verificar con IA'}}
+          </button>
+        </ng-container>
+      </div>
+
+      <!-- Recomendaciones -->
+      <div class="obs-section">
+        <div class="obs-section-title">
+          <mat-icon>lightbulb</mat-icon> Recomendaciones
+          <button mat-icon-button color="primary" class="add-recom-btn"
+                  (click)="abrirAgregarComentario(item.idObservacion)"
+                  matTooltip="Agregar recomendación">
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
+        </div>
+        <div class="recom-list" *ngIf="item['comentarios']?.length > 0; else sinRecomendaciones">
+          <div class="recom-item" *ngFor="let com of item['comentarios']">
+            <mat-icon class="recom-icon">chevron_right</mat-icon>
+            <div class="recom-content">
+              <span class="recom-text">{{com.comentario}}</span>
+              <span class="recom-date">{{com.dateString}}</span>
+            </div>
+            <button mat-icon-button class="recom-edit-btn"
+                    (click)="abrirEditarComentario(com, item.idObservacion)"
+                    matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
             </button>
+          </div>
         </div>
+        <ng-template #sinRecomendaciones>
+          <p class="obs-text obs-text--muted">Sin recomendaciones</p>
+        </ng-template>
+      </div>
+
+    </div><!-- /obs-body -->
+
+    <!-- Evidencia fotográfica -->
+    <div class="obs-photos" *ngIf="item['imagenes']?.length > 0">
+      <div class="obs-section-title">
+        <mat-icon>photo_library</mat-icon> Evidencia Fotográfica
+      </div>
+      <div class="photo-grid">
+        <div class="photo-item" *ngFor="let itemimg of item['imagenes']">
+          <div class="photo-thumb" (click)="ampliarImagen(itemimg.url)">
+            <img [src]="itemimg.url" alt="Evidencia" loading="lazy" />
+            <div class="photo-overlay"><mat-icon>zoom_in</mat-icon></div>
+          </div>
+          <div class="photo-meta">
+            <span>{{itemimg.fechaRegistro | date:'dd/MM/yyyy'}}</span>
+            <button mat-icon-button (click)="descargarImagen(itemimg.url)" matTooltip="Descargar">
+              <mat-icon>download</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+
+  </div><!-- /obs-card -->
+
+  <!-- ── Firmas ──────────────────────────────────────────────────────── -->
+  <div class="firmas-section">
+    <div class="firmas-section-title">
+      <mat-icon>draw</mat-icon> Firmas
+    </div>
+    <div *ngIf="informacionData['firmas']?.length > 0; else sinFirmas" class="firmas-grid">
+      <div *ngFor="let firma of informacionData['firmas']" class="firma-card">
+        <img [src]="firma.url" alt="Firma" class="firma-img" loading="lazy" />
+        <div class="firma-nombre">{{firma.nombreFirma}}</div>
+        <div class="firma-tipo">{{firma.tipo}}</div>
+        <div class="firma-fecha">{{firma.fechaRegistro | date:'dd/MM/yyyy'}}</div>
+      </div>
+    </div>
+    <ng-template #sinFirmas>
+      <p class="sin-firmas">
+        <mat-icon>pending</mat-icon> Sin firmas — pendiente de firma
+      </p>
+    </ng-template>
+  </div>
+
+  <!-- ── Comentario general ─────────────────────────────────────────── -->
+  <div class="obs-card obs-card--general" *ngIf="informacionData.recomendaciones">
+    <div class="obs-section-title">
+      <mat-icon>comment</mat-icon> Comentario General del Reporte
+    </div>
+    <p class="obs-text">{{informacionData.recomendaciones}}</p>
+  </div>
+
+  <!-- ── Lightbox ───────────────────────────────────────────────────── -->
+  <div class="lightbox-overlay" *ngIf="imgAmpliadaUrl" (click)="cerrarImagen()">
+    <div class="lightbox-content" (click)="$event.stopPropagation()" (wheel)="onLightboxWheel($event)">
+      <button mat-icon-button class="lightbox-close" (click)="cerrarImagen()" matTooltip="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
+      <div class="lightbox-zoom-container"
+           (mousedown)="onDragStart($event)"
+           (mousemove)="onDragMove($event)"
+           (mouseup)="onDragEnd()"
+           (mouseleave)="onDragEnd()">
+        <img [src]="imgAmpliadaUrl" alt="Imagen ampliada" class="lightbox-img"
+             [style.transform]="'scale(' + zoomLevel + ') translate(' + imgTranslateX + 'px,' + imgTranslateY + 'px)'"
+             [style.cursor]="zoomLevel > 1 ? 'grab' : 'default'" />
+      </div>
+      <div class="lightbox-actions">
+        <button mat-icon-button matTooltip="Alejar" (click)="zoomOut()" [disabled]="zoomLevel <= 1"><mat-icon>zoom_out</mat-icon></button>
+        <span class="zoom-label">{{ (zoomLevel * 100) | number:'1.0-0' }}%</span>
+        <button mat-icon-button matTooltip="Acercar" (click)="zoomIn()"><mat-icon>zoom_in</mat-icon></button>
+        <button mat-icon-button matTooltip="Restablecer" (click)="resetZoom()" [disabled]="zoomLevel === 1"><mat-icon>fit_screen</mat-icon></button>
+        <button mat-flat-button color="primary" (click)="descargarImagen(imgAmpliadaUrl!)">
+          <mat-icon>download</mat-icon> Descargar
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>

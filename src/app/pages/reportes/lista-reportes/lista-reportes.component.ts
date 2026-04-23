@@ -1,7 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ViewChild, AfterViewInit } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Router } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl } from '@angular/forms';
 import * as _moment from 'moment';
@@ -30,6 +32,13 @@ import { ReporteService } from '../services/reporte.service';
   templateUrl: './lista-reportes.component.html',
   styleUrls: ['./lista-reportes.component.scss'],
   host: {ngSkipHydration: 'true'},
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0', overflow: 'hidden' })),
+      state('expanded', style({ height: '*', overflow: 'hidden' })),
+      transition('expanded <=> collapsed', animate('220ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
   providers: [
     {
       provide: DateAdapter,
@@ -40,12 +49,15 @@ import { ReporteService } from '../services/reporte.service';
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class ListaReportesComponent implements OnInit {
+export class ListaReportesComponent implements OnInit, AfterViewInit {
   private readonly _reporte = inject(ReporteService);
   private readonly router = inject(Router);
   private readonly _snackBar = inject(MatSnackBar);
 
-  displayedColumns: string[] = ['select', 'id', 'assigned', 'name', 'priority', 'budget', 'firmas', 'accion'];
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  displayedColumns: string[] = ['select', 'expand', 'id', 'assigned', 'name', 'priority', 'budget', 'firmas', 'accion'];
+  expandedElement: any | null = null;
   selection = new SelectionModel<any>(true, []);
   dataSource2 = new MatTableDataSource<any>([]);
   isLoading = false;
@@ -65,6 +77,10 @@ export class ListaReportesComponent implements OnInit {
     this.getHoteles();
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource2.paginator = this.paginator;
+  }
+
   setMonthAndYear(normalizedMonthAndYear: any, datepicker: MatDatepicker<any>) {
     const ctrlValue = this.date.value!;
     ctrlValue.month(normalizedMonthAndYear.month());
@@ -82,6 +98,7 @@ export class ListaReportesComponent implements OnInit {
     this._reporte.reportesFiltro(filtros).subscribe({
       next: (value: any) => {
         this.dataSource2 = new MatTableDataSource(value);
+        this.dataSource2.paginator = this.paginator;
         this.isLoading = false;
       },
       error: () => {
@@ -234,6 +251,8 @@ export class ListaReportesComponent implements OnInit {
     this._reporte.reportesFiltro(filtros).subscribe({
       next: (value: any) => {
         this.dataSource2 = new MatTableDataSource(value);
+        this.dataSource2.paginator = this.paginator;
+        this.expandedElement = null;
         this.isLoading = false;
       },
       error: () => {

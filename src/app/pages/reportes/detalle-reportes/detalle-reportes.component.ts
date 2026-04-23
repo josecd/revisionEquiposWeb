@@ -23,7 +23,7 @@ export interface Section {
   templateUrl: './detalle-reportes.component.html',
   styleUrls: ['./detalle-reportes.component.scss']
 })
-export class DetalleReportesComponent implements OnChanges {
+export class DetalleReportesComponent implements OnInit, OnChanges {
 
   @ViewChild('pdfTable', { static: false }) el!: ElementRef;
   displayedColumns: string[] = ['assigned', 'name', 'priority', 'budget'];
@@ -56,6 +56,7 @@ export class DetalleReportesComponent implements OnChanges {
   ];
 
   informacionData: any;
+  isLoading = false;
 
   private readonly _reporte = inject(ReporteService);
   private readonly router = inject(Router);
@@ -93,16 +94,17 @@ export class DetalleReportesComponent implements OnChanges {
   }
 
   getReportes() {
+    this.isLoading = true;
     this._reporte.getReporteID(this.id).subscribe({
       next: (value: any) => {
-        this.informacionData = value[0]
-        console.log(value);
-        
+        this.informacionData = value[0];
+        this.isLoading = false;
       },
-      error: (err) => {
-
+      error: () => {
+        this.isLoading = false;
+        this.snackBar.open('Error al cargar el reporte', 'Cerrar', { duration: 4000 });
       },
-    })
+    });
   }
 
 
