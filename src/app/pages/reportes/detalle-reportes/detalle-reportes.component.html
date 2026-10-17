@@ -98,6 +98,7 @@
 
     <!-- Field pills -->
     <div class="obs-fields">
+      <span class="field-pill" *ngIf="item?.numeroEquipo"><b>N° Equipo</b> {{item.numeroEquipo}}</span>
       <span class="field-pill" *ngIf="item?.marca"><b>Marca</b> {{item.marca}}</span>
       <span class="field-pill" *ngIf="item?.modelo"><b>Modelo</b> {{item.modelo}}</span>
       <span class="field-pill" *ngIf="item?.numeroSerie"><b>N° Serie</b> {{item.numeroSerie}}</span>

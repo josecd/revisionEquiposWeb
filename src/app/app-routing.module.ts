@@ -44,6 +44,11 @@ const routes: Routes = [
           import('./pages/inventarios/inventarios.module').then((m) => m.InventariosModule),
       },
       {
+        path: 'inventario-dinamico',
+        loadChildren: () =>
+          import('./pages/inventario-dinamico/inventario-dinamico.module').then((m) => m.InventarioDinamicoModule),
+      },
+      {
         path: 'reportes',
         loadChildren: () =>
           import('./pages/reportes/reportes.module').then((m) => m.ReportesModule),

@@ -82,10 +82,15 @@ export const navItems: NavItem[] = [
     iconName: 'file-pencil',
     route: '/reportes/lista',
   },
-  {
+  /* {
     displayName: 'Inventarios',
     iconName: 'pencil',
     route: '/inventario/lista',
+  }, */
+  {
+    displayName: 'Inv. Dinámico',
+    iconName: 'box',
+    route: '/inventario-dinamico',
   },
   {
     displayName: 'Gráfica',

@@ -1,0 +1,40 @@
+<div class="p-24">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Grupos de Inventario</h2>
+    <button mat-flat-button color="primary" (click)="abrirCrear()">
+      + Agregar Grupo
+    </button>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="cargando" class="mb-4"></mat-progress-bar>
+
+  <div class="row" *ngIf="!cargando">
+    <div class="col-md-4 mb-4" *ngFor="let grupo of grupos">
+      <mat-card class="cardWithShadow cursor-pointer" (click)="irAInventario(grupo.id)">
+        <mat-card-content>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center">
+              <div class="bg-light-primary text-primary rounded-circle p-2 me-3">
+                <i-tabler name="box" class="icon-24"></i-tabler>
+              </div>
+              <mat-card-title class="m-0">{{ grupo.nombre }}</mat-card-title>
+            </div>
+            <button mat-icon-button color="warn" (click)="$event.stopPropagation(); eliminarGrupo(grupo.id)" matTooltip="Eliminar grupo">
+              <i-tabler name="trash" class="icon-20"></i-tabler>
+            </button>
+          </div>
+          <p class="text-muted text-sm">{{ grupo.descripcion || 'Sin descripción' }}</p>
+          <div class="text-end mt-2">
+            <button mat-button color="primary">Gestionar &rarr;</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    
+    <div class="col-12" *ngIf="grupos.length === 0">
+      <mat-card class="cardWithShadow text-center p-5">
+        <p class="text-muted mb-0">Aún no has creado ningún grupo de inventario.</p>
+      </mat-card>
+    </div>
+  </div>
+</div>
